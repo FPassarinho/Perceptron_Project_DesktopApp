@@ -3,14 +3,13 @@ import random
 import array as arr
 from conversion_functions import *
 
-open_dir_path_test = 'test_images'
-dir_path_test = 'test_images'
-dir_path_train = 'images'
+dir_path_train = 'resize_images'
+dir_path_test= 'resize_test_images'
 
 train_samples = countImages(dir_path=dir_path_train)
 test_number = countImages(dir_path=dir_path_test)
 
-INPUT_SIZE = 1080000
+INPUT_SIZE = 10800 #número de pixeis de cada imagem 120*90
 NUM_TRAIN_SAMPLES = train_samples
 NUM_TEST_SAMPLES = test_number
 NUM_EPOCHS = 1000
@@ -26,15 +25,14 @@ train_labels = arr.array('i',[
 # Abertura de dados do ficheiro TXT.
 train_data = open('data_file/pixel_data.txt', 'r').readlines()
 
-# Imagem de Teste que pretende ser conveertida
-test_data = loadStoreImages(test_number, open_dir_path=open_dir_path_test)
+# Imagem de Teste que pretende ser convertida
+test_data = loadStoreImages(test_number, dir_path=dir_path_test)
 
 weights = [0] * INPUT_SIZE #vetor de pesos    
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
 ##############################################
-
 def activation_function(soma_dos_pesos_amostra):
   # soma_dos_pesos_amostra = soma ponderada dos pixels de uma amostra
   sig = 1.0 / (1 + math.exp(-soma_dos_pesos_amostra))
@@ -43,7 +41,6 @@ def activation_function(soma_dos_pesos_amostra):
 ##########################
 ### Função de predição ###
 ##########################
-
 def predict(input = []):
   sum = float(0);
   for i in range(1,INPUT_SIZE):
@@ -53,7 +50,6 @@ def predict(input = []):
 ##############
 ### Treino ###
 ##############
-
 def train():
   for epoch in range(NUM_EPOCHS):
     for sample in range(NUM_TRAIN_SAMPLES):
@@ -62,6 +58,9 @@ def train():
       for i in range (INPUT_SIZE):
         weights[i] += LEARNING_RATE * error * train_data[sample][i]
 
+############
+### Main ###
+############
 def main():
   for i in range(INPUT_SIZE):
     weights[i] = (0.10 * random.random() - 0.05)
