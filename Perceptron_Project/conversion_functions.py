@@ -22,30 +22,32 @@ def resize_images(count, dir_path, dir_path_resize):
     new_image.save(save_path)
   return
 
+
 # Carrega a imagem original
 def loadStoreImagesFile(count, dir_path):
-  for i in range(1, count + 1):
-    image = Image.open(f"{dir_path}/img011-{i}.png");
-    image = image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-    pixel_matrix = np.array(image)  
-    pixel_matrix[pixel_matrix < 127] = 3
-    pixel_matrix[pixel_matrix >= 127] = 255
-    with open(f'data_file/pixel_data.txt', 'w') as file:
+  with open(f'data_file/pixel_data.txt', 'w') as file:
+    file.write('[\n');
+
+    for i in range(1, count + 1):
+      image = Image.open(f"{dir_path}/img011-{i}.png");
+      image = image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
+      pixel_matrix = np.array(image)  
+      pixel_matrix[pixel_matrix < 127] = 0
+      pixel_matrix[pixel_matrix >= 127] = 1
       file.write('[\n');
-      for i in range(1, count):
-        file.write('[\n');
-        for row in pixel_matrix:
-          file.write(', '.join(map(str, row)) + '\n');
-        file.write('],\n');  
-      file.write(']\n');
+      for row in pixel_matrix:
+        file.write(' '.join(map(str, row)) + '\n');
+      file.write('],\n');  
+    file.write(']\n');
 
 def loadStoreImages(count, dir_path):
-  images_data = []
+  #images_data = type(list)
   for i in range(1, count + 1):
     image = Image.open(f"{dir_path}/img011-{i}.png");
     image = image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
     pixel_matrix = np.array(image)  
-    pixel_matrix[pixel_matrix < 127] = 3
-    pixel_matrix[pixel_matrix >= 127] = 255
-    images_data.append(pixel_matrix)
+    pixel_matrix[pixel_matrix < 127] = 0
+    pixel_matrix[pixel_matrix >= 127] = 1
+    #images_data.append(pixel_matrix)
+    images_data = pixel_matrix
   return images_data
