@@ -15,8 +15,6 @@ dir_path_test_resize = 'resize_test_images'
 train_samples = countImages(dir_path=dir_path_train)
 test_samples = countImages(dir_path=dir_path_test)
 
-print(dir_path_test_resize)
-print(test_samples)
 #Conversão de tamanho de imagens de treino
 resize_images(train_samples, dir_path=dir_path_train, dir_path_resize=dir_path_train_resize)
 
@@ -24,6 +22,6 @@ resize_images(train_samples, dir_path=dir_path_train, dir_path_resize=dir_path_t
 resize_images(test_samples, dir_path=dir_path_test, dir_path_resize=dir_path_test_resize)
 
 #Conversão de imagens para ficheiro txt
-loadStoreImagesFile(train_samples, dir_path=dir_path_train_resize) ###ERRO####
-test = loadStoreImages(test_samples, dir_path_test_resize)
-print(test)
+loadStoreImagesFile(train_samples, dir_path=dir_path_train_resize) 
+
+loadStoreImagesFileNpz(train_samples, dir_path=dir_path_train_resize) 

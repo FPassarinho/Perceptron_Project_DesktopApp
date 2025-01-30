@@ -3,6 +3,9 @@ import random
 import array as arr
 from conversion_functions import *
 
+#O código está preparado para ler matrizes unidmensionais, então +e por que não se pode guardar os dados em bidimensional, 
+# caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
+
 dir_path_train = 'resize_images'
 dir_path_test= 'resize_test_images'
 
@@ -11,23 +14,24 @@ test_number = countImages(dir_path=dir_path_test)
 
 INPUT_SIZE = 10800 #número de pixeis de cada imagem 120*90
 NUM_TRAIN_SAMPLES = train_samples
-NUM_TEST_SAMPLES = test_number
-NUM_EPOCHS = 1000
+NUM_TEST_SAMPLES = test_number 
+#O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
+NUM_EPOCHS = 50 #(10–50 for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
 LEARNING_RATE = 0.01
 
-test_labels = arr.array('i', [1,1,0,0,0,0]);
+# O tran labels serve para dizzer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
+# então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
+# A ideia aplica-se a ambos
+test_labels = arr.array('i', [1] * NUM_TEST_SAMPLES);
+train_labels = arr.array('i', [1] * NUM_TRAIN_SAMPLES)
 
-train_labels = arr.array('i',[
-	1,1,1,1,1,1,1,1,1,
-	0,0,0,0,0,0,0,0,0
-]);
-
-# Abertura de dados do ficheiro TXT.
-#train_data = open('data_file/pixel_data.txt', 'r').readlines() ###ERRO####
+train_data = [];
+data = np.load('image_data.npz')
+for key in data.files:
+  train_data.append(data[key].flatten());
 
 # Imagem de Teste que pretende ser convertida
-test_data = loadStoreImages(test_number, dir_path=dir_path_test)   ### está a guardar tudo numa linha
-train_data = loadStoreImages(train_samples, dir_path=dir_path_train)
+test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
 weights = [0] * INPUT_SIZE #vetor de pesos    
 
@@ -36,7 +40,7 @@ weights = [0] * INPUT_SIZE #vetor de pesos
 ##############################################
 def activation_function(soma_dos_pesos_amostra):
   # soma_dos_pesos_amostra = soma ponderada dos pixels de uma amostra
-  sig = 1.0 / (1 + math.exp(-soma_dos_pesos_amostra))
+  sig = float(1.0 / (1 + math.exp(-soma_dos_pesos_amostra)))
   return sig
 
 ##########################
@@ -44,8 +48,7 @@ def activation_function(soma_dos_pesos_amostra):
 ##########################
 def predict(input = []):
   sum = float(0);
-  assert len(input) == INPUT_SIZE, f"Erro: tamanho do input ({len(input)}) diferente de INPUT_SIZE ({INPUT_SIZE})."
-  for i in range(1,INPUT_SIZE):
+  for i in range(INPUT_SIZE):
     sum += weights[i] * input[i];
   return activation_function(sum);
 
@@ -72,10 +75,13 @@ def main():
     print(f"\n\nTesting image {i}... ")
 
     prediction = float(predict(test_data[i]))
-    if prediction > 0.8:
-      print(f"\nAcho que é um A com {prediction} por cento de certeza\n");
+
+    prediction_percentage = prediction * 100;
+
+    if prediction_percentage > 80:
+      print(f"\nAcho que é um A com {prediction_percentage:.2f} por cento de certeza\n");
     else:
-      print(f"\nAcho que não é um A com {1-prediction}por cento de certeza\n");
+      print(f"\nAcho que não é um A com {100-prediction_percentage:.2f}por cento de certeza\n");
 
   return 0
 
