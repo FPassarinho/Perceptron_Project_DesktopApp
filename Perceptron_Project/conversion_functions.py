@@ -12,7 +12,7 @@ def countImages(dir_path):
       count += 1
   return count
 
-# Dá resize à imagem
+# Dá resize à imagem (é necessário um path para definir onde elas vão guardadas)
 def resize_images(count, dir_path, dir_path_resize):
   for i in range(1, count + 1):
     image = Image.open(f"{dir_path}/img011-{i}.png")
@@ -29,8 +29,9 @@ def loadStoreImagesFile(count, dir_path):
 
     for i in range(1, count + 1):
       image = Image.open(f"{dir_path}/img011-{i}.png");
-      image = image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-      pixel_matrix = np.array(image)  
+      new_image = image.resize((120, 90));
+      new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
+      pixel_matrix = np.array(new_image)  
       pixel_matrix[pixel_matrix < 127] = 0
       pixel_matrix[pixel_matrix >= 127] = 1
       file.write('  [\n');
@@ -43,21 +44,23 @@ def loadStoreImagesFileNpz(count, dir_path):
   image_dict = {}
   for i in range(1, count + 1):
     image = Image.open(f"{dir_path}/img011-{i}.png");
-    image = image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-    pixel_matrix = np.array(image)  
+    new_image = image.resize((120, 90));
+    new_image = new_image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
+    pixel_matrix = np.array(new_image)  
     pixel_matrix[pixel_matrix < 127] = 0
     pixel_matrix[pixel_matrix >= 127] = 1
 
     image_dict[f"img011-{i}"] = pixel_matrix
 
-  np.savez("image_data.npz", **image_dict)
+  np.savez("data_file/image_data.npz", **image_dict)
 
 def loadStoreImages(count, dir_path):
   images_data = []
   for i in range(1, count + 1):
     image = Image.open(f"{dir_path}/img011-{i}.png");
-    image = image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
-    pixel_matrix = np.array(image)  
+    new_image = image.resize((120, 90));
+    new_image = new_image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
+    pixel_matrix = np.array(new_image)  
     pixel_matrix[pixel_matrix < 127] = 0
     pixel_matrix[pixel_matrix >= 127] = 1
 

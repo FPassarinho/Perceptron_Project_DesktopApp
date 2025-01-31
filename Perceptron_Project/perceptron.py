@@ -5,9 +5,8 @@ from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então +e por que não se pode guardar os dados em bidimensional, 
 # caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
-
-dir_path_train = 'resize_images'
-dir_path_test= 'resize_test_images'
+dir_path_train = 'images'
+dir_path_test= 'test_images'
 
 train_samples = countImages(dir_path=dir_path_train)
 test_number = countImages(dir_path=dir_path_test)
@@ -25,14 +24,16 @@ LEARNING_RATE = 0.01
 test_labels = arr.array('i', [1] * NUM_TEST_SAMPLES);
 train_labels = arr.array('i', [1] * NUM_TRAIN_SAMPLES)
 
+# Obtenção dos dados do Ficheiro NPZ
 train_data = [];
-data = np.load('image_data.npz')
+data = np.load('data_file/image_data.npz')
 for key in data.files:
   train_data.append(data[key].flatten());
 
-# Imagem de Teste que pretende ser convertida
+# Resize e conversão das imagens de teste
 test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
+# Definição dos pessos
 weights = [0] * INPUT_SIZE #vetor de pesos    
 
 ##############################################
