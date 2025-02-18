@@ -1,8 +1,10 @@
 import numpy as np
 import os
+import cv2
 from PIL import Image
 
-# No for aparece range + 1 porque assim considera o ultimo, por  exemplo 55 + 1 = <= 55. Sendo que quando é range(1, 55) é = < 55
+# No for começa com 0 e acaba no count pois 0 é a primeira posição pois as imagens tão numeradas como se fossem vetores e 
+#Count pois como no for o count não é inclusive se o count for 3410 ele vai escreve 3409, que é o que pretendemos 
 
 # Conta o número de imagens 
 def countImages(dir_path):
@@ -14,26 +16,44 @@ def countImages(dir_path):
 
 # Dá resize à imagem (é necessário um path para definir onde elas vão guardadas)
 def resize_images(count, dir_path, dir_path_resize):
-  for i in range(1, count + 1):
-    image = Image.open(f"{dir_path}/img011-{i}.png")
+  for i in range(0, count):
+    image = Image.open(f"{dir_path}/img-{i}.png")
     new_image = image.resize((120, 90))
     original_filename = (f"img011-{i}.png")
     save_path = os.path.join(dir_path_resize, original_filename)
     new_image.save(save_path)
   return
 
-# Guarda as Imagens em Matrizes num ficheiro TXT
-def loadStoreImagesFile(count, dir_path):
+# Guarda as Imagens em Matrizes num ficheiro TXT, de treino
+def loadStoreImagesFileTrain(count, dir_path):
   with open(f'data_file/pixel_data.txt', 'w') as file:
     file.write('[\n');
 
-    for i in range(1, count + 1):
-      image = Image.open(f"{dir_path}/img011-{i}.png");
+    for i in range(0, count):
+      image = Image.open(f"{dir_path}/img-{i}.png");
       new_image = image.resize((120, 90));
       new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
       pixel_matrix = np.array(new_image)  
-      pixel_matrix[pixel_matrix < 127] = 0
-      pixel_matrix[pixel_matrix >= 127] = 1
+      pixel_matrix[pixel_matrix < 127] = 1
+      pixel_matrix[pixel_matrix >= 127] = 0
+      file.write('  [\n');
+      for row in pixel_matrix:
+        file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
+      file.write('  ],\n');  
+    file.write(']\n');
+
+# Guarda as Imagens em Matrizes num ficheiro TXT, de teste
+def loadStoreImagesFileTest(count, dir_path):
+  with open(f'data_file/pixel_data_test.txt', 'w') as file:
+    file.write('[\n');
+
+    for i in range(0, count):
+      image = Image.open(f"{dir_path}/img-{i}.png");
+      new_image = image.resize((120, 90));
+      new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
+      pixel_matrix = np.array(new_image)  
+      pixel_matrix[pixel_matrix < 127] = 1
+      pixel_matrix[pixel_matrix >= 127] = 0
       file.write('  [\n');
       for row in pixel_matrix:
         file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
@@ -42,13 +62,13 @@ def loadStoreImagesFile(count, dir_path):
 
 def loadStoreImagesFileNpz(count, dir_path):
   image_dict = {}
-  for i in range(1, count + 1):
-    image = Image.open(f"{dir_path}/img011-{i}.png");
+  for i in range(0, count):
+    image = Image.open(f"{dir_path}/img-{i}.png");
     new_image = image.resize((120, 90));
     new_image = new_image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
     pixel_matrix = np.array(new_image)  
-    pixel_matrix[pixel_matrix < 127] = 0
-    pixel_matrix[pixel_matrix >= 127] = 1
+    pixel_matrix[pixel_matrix < 127] = 1
+    pixel_matrix[pixel_matrix >= 127] = 0
 
     image_dict[f"img011-{i}"] = pixel_matrix
 
@@ -56,16 +76,50 @@ def loadStoreImagesFileNpz(count, dir_path):
 
 def loadStoreImages(count, dir_path):
   images_data = []
-  for i in range(1, count + 1):
-    image = Image.open(f"{dir_path}/img011-{i}.png");
+  for i in range(0, count):
+    image = Image.open(f"{dir_path}/img-{i}.png");
     new_image = image.resize((120, 90));
     new_image = new_image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
     pixel_matrix = np.array(new_image)  
-    pixel_matrix[pixel_matrix < 127] = 0
-    pixel_matrix[pixel_matrix >= 127] = 1
+    pixel_matrix[pixel_matrix < 127] = 1
+    pixel_matrix[pixel_matrix >= 127] = 0
 
     flattened_pixels = pixel_matrix.flatten()
 
     images_data.append(flattened_pixels)
 
   return images_data
+
+def takePicture():
+  dir_path_train = 'test_images'
+  cam = cv2.VideoCapture(0)
+  cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+  cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+  result, image = cam.read()
+  count = countImages(dir_path_train)#é so count pois as imagens estão numeradas igual é sua posição nos vetores, isso faz com que o 
+                                     #o número de imagem delas seja menos 1 do que o total delas.
+                                     
+  if result:
+    cv2.imshow("Foto", image);
+    cv2.imwrite(f"test_images/img-{count}.png", image);
+    cv2.waitKey(0)
+    cv2.destroyWindow("Foto")
+  else:
+    print("No image detected");
+
+  cam.release()
+  cv2.destroyAllWindows()
+
+# Função de renomear os nomes dos ficheiros
+def rename():
+  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\Perceptron_Project\dataset"  
+
+  ficheiros = sorted(os.listdir(pasta))
+
+  for i, ficheiro in enumerate(ficheiros, start=0):
+    extensao = os.path.splitext(ficheiro)[1]  
+    novo_nome = f"img-{i}{extensao}"  
+    antigo_caminho = os.path.join(pasta, ficheiro)
+    novo_caminho = os.path.join(pasta, novo_nome)
+      
+    os.rename(antigo_caminho, novo_caminho)

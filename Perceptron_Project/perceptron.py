@@ -5,7 +5,7 @@ from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então +e por que não se pode guardar os dados em bidimensional, 
 # caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
-dir_path_train = 'images'
+dir_path_train = 'dataset'
 dir_path_test= 'test_images'
 
 train_samples = countImages(dir_path=dir_path_train)
@@ -15,14 +15,20 @@ INPUT_SIZE = 10800 #número de pixeis de cada imagem 120*90
 NUM_TRAIN_SAMPLES = train_samples
 NUM_TEST_SAMPLES = test_number 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
-NUM_EPOCHS = 50 #(10–50 for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
-LEARNING_RATE = 0.01
+NUM_EPOCHS = 300 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
+LEARNING_RATE = 0.01 #O learning rate determina o quão grande ou pequeno será o ajuste dos pesos do modelo a cada iteração do treinamento.
+                    #Se a taxa de aprendizagem for muito alta, o modelo pode não convergir ou saltar para uma solução sub ótima.
+                    #Se for muito baixa, o modelo pode demorar muito para aprender, ou ficar preso em um mínimo local (convergir muito lentamente).
+                    # Valores pequenos:  (0.00001 a 0.001)
+                    # Valores médios:  (0.001 a 0.01)
+                    # Valores altos:  (0.1 a 1.0)
 
-# O tran labels serve para dizzer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
+# O train labels serve para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
-# A ideia aplica-se a ambos
-test_labels = arr.array('i', [1] * NUM_TEST_SAMPLES);
-train_labels = arr.array('i', [1] * NUM_TRAIN_SAMPLES)
+train_labels = arr.array('i', [0] * NUM_TRAIN_SAMPLES)
+# Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
+for i in range(0, 50): 
+    train_labels[i] = 1
 
 # Obtenção dos dados do Ficheiro NPZ
 train_data = [];
@@ -33,14 +39,13 @@ for key in data.files:
 # Resize e conversão das imagens de teste
 test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
-# Definição dos pessos
+# Pesos 
 weights = [0] * INPUT_SIZE #vetor de pesos    
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
 ##############################################
 def activation_function(soma_dos_pesos_amostra):
-  # soma_dos_pesos_amostra = soma ponderada dos pixels de uma amostra
   sig = float(1.0 / (1 + math.exp(-soma_dos_pesos_amostra)))
   return sig
 
@@ -58,11 +63,16 @@ def predict(input = []):
 ##############
 def train():
   for epoch in range(NUM_EPOCHS):
+    epoch_loss = 0
     for sample in range(NUM_TRAIN_SAMPLES):
       prediction = float(predict(train_data[sample]))
       error = float(train_labels[sample] - prediction)
+      epoch_loss += error ** 2
       for i in range (INPUT_SIZE):
         weights[i] += LEARNING_RATE * error * train_data[sample][i]
+
+    if epoch % 10 == 0:
+      print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
 
 ############
 ### Main ###
@@ -72,8 +82,9 @@ def main():
     weights[i] = (0.10 * random.random() - 0.05)
 
   train()
+
   for i in range(NUM_TEST_SAMPLES):
-    print(f"\n\nTesting image {i}... ")
+    print(f"\n\nTesting image {i+1}... ")
 
     prediction = float(predict(test_data[i]))
 
@@ -82,7 +93,7 @@ def main():
     if prediction_percentage > 80:
       print(f"\nAcho que é um A com {prediction_percentage:.2f} por cento de certeza\n");
     else:
-      print(f"\nAcho que não é um A com {100-prediction_percentage:.2f}por cento de certeza\n");
+      print(f"\nAcho que não é um A com {100-prediction_percentage:.2f} por cento de certeza\n");
 
   return 0
 
