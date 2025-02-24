@@ -11,7 +11,7 @@ dir_path_test= 'test_images'
 train_samples = countImages(dir_path=dir_path_train)
 test_number = countImages(dir_path=dir_path_test)
 
-INPUT_SIZE = 10800 #número de pixeis de cada imagem 120*90
+NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
 NUM_TRAIN_SAMPLES = train_samples
 NUM_TEST_SAMPLES = test_number 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
@@ -40,7 +40,7 @@ for key in data.files:
 test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
 # Pesos 
-weights = [0] * INPUT_SIZE #vetor de pesos    
+weights = [0] * NUM_PIXELS_AMOSTRA #vetor de pesos    
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
@@ -54,7 +54,7 @@ def activation_function(soma_dos_pesos_amostra):
 ##########################
 def predict(input = []):
   sum = float(0);
-  for i in range(INPUT_SIZE):
+  for i in range(NUM_PIXELS_AMOSTRA):
     sum += weights[i] * input[i];
   return activation_function(sum);
 
@@ -68,7 +68,7 @@ def train():
       prediction = float(predict(train_data[sample]))
       error = float(train_labels[sample] - prediction)
       epoch_loss += error ** 2
-      for i in range (INPUT_SIZE):
+      for i in range (NUM_PIXELS_AMOSTRA):
         weights[i] += LEARNING_RATE * error * train_data[sample][i]
 
     if epoch % 10 == 0:
@@ -78,11 +78,12 @@ def train():
 ### Main ###
 ############
 def main():
-  for i in range(INPUT_SIZE):
+  for i in range(NUM_PIXELS_AMOSTRA):
     weights[i] = (0.10 * random.random() - 0.05)
 
   train()
 
+  print("\n\n *** ESTE PERCEPTRON considera que é um A quando a certeza for maior que 0.8 **\n");
   for i in range(NUM_TEST_SAMPLES):
     print(f"\n\nTesting image {i+1}... ")
 
@@ -90,7 +91,7 @@ def main():
 
     prediction_percentage = prediction * 100;
 
-    if prediction_percentage > 80:
+    if prediction_percentage >= 80:
       print(f"\nAcho que é um A com {prediction_percentage:.2f} por cento de certeza\n");
     else:
       print(f"\nAcho que não é um A com {100-prediction_percentage:.2f} por cento de certeza\n");
