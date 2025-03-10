@@ -27,12 +27,12 @@ LEARNING_RATE = 0.01 #O learning rate determina o quão grande ou pequeno será 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
 train_labels = arr.array('i', [0] * NUM_TRAIN_SAMPLES)
 # Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
-for i in range(0, 50): 
+for i in range(0, 100): 
     train_labels[i] = 1
 
 # Obtenção dos dados do Ficheiro NPZ
 train_data = [];
-data = np.load('data_file/image_data.npz')
+data = np.load('data_file/image_data.npz') #,mmap_mode="r")
 for key in data.files:
   train_data.append(data[key].flatten());
 
