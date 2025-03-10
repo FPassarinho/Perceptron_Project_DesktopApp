@@ -40,7 +40,10 @@ for key in data.files:
 test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
 # Pesos 
-weights = [0] * NUM_PIXELS_AMOSTRA #vetor de pesos    
+weights = [0] * NUM_PIXELS_AMOSTRA #vetor de pesos  
+
+# Bias
+bias = 0
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
@@ -55,13 +58,15 @@ def activation_function(soma_dos_pesos_amostra):
 def predict(input = []):
   sum = float(0);
   for i in range(NUM_PIXELS_AMOSTRA):
-    sum += weights[i] * input[i];
-  return activation_function(sum);
+    sum += weights[i] * input[i] 
+  sum += bias
+  return activation_function(sum)
 
 ##############
 ### Treino ###
 ##############
 def train():
+  global bias
   for epoch in range(NUM_EPOCHS):
     epoch_loss = 0
     for sample in range(NUM_TRAIN_SAMPLES):
@@ -70,7 +75,8 @@ def train():
       epoch_loss += error ** 2
       for i in range (NUM_PIXELS_AMOSTRA):
         weights[i] += LEARNING_RATE * error * train_data[sample][i]
-
+      bias += LEARNING_RATE * error
+      
     if epoch % 10 == 0:
       print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
 
@@ -78,6 +84,8 @@ def train():
 ### Main ###
 ############
 def main():
+  global bias
+  bias = 0
   for i in range(NUM_PIXELS_AMOSTRA):
     weights[i] = (0.10 * random.random() - 0.05)
 

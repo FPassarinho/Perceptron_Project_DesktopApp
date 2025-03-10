@@ -34,8 +34,8 @@ def loadStoreImagesFileTrain(count, dir_path):
       new_image = image.resize((120, 90));
       new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
       pixel_matrix = np.array(new_image)  
-      pixel_matrix[pixel_matrix < 127] = 1
-      pixel_matrix[pixel_matrix >= 127] = 0
+      pixel_matrix = 1 - pixel_matrix / 255.0
+      
       file.write('  [\n');
       for row in pixel_matrix:
         file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
@@ -52,8 +52,8 @@ def loadStoreImagesFileTest(count, dir_path):
       new_image = image.resize((120, 90));
       new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
       pixel_matrix = np.array(new_image)  
-      pixel_matrix[pixel_matrix < 127] = 1
-      pixel_matrix[pixel_matrix >= 127] = 0
+      pixel_matrix = 1 - pixel_matrix / 255.0
+
       file.write('  [\n');
       for row in pixel_matrix:
         file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
@@ -67,8 +67,7 @@ def loadStoreImagesFileNpz(count, dir_path):
     new_image = image.resize((120, 90));
     new_image = new_image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
     pixel_matrix = np.array(new_image)  
-    pixel_matrix[pixel_matrix < 127] = 1
-    pixel_matrix[pixel_matrix >= 127] = 0
+    pixel_matrix = 1 - pixel_matrix / 255.0
 
     image_dict[f"img011-{i}"] = pixel_matrix
 
@@ -81,8 +80,7 @@ def loadStoreImages(count, dir_path):
     new_image = image.resize((120, 90));
     new_image = new_image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
     pixel_matrix = np.array(new_image)  
-    pixel_matrix[pixel_matrix < 127] = 1
-    pixel_matrix[pixel_matrix >= 127] = 0
+    pixel_matrix = 1 - pixel_matrix / 255.0
 
     flattened_pixels = pixel_matrix.flatten()
 
