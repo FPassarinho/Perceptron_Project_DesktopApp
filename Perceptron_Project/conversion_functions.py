@@ -24,6 +24,22 @@ def resize_images(count, dir_path, dir_path_resize):
     new_image.save(save_path)
   return
 
+# Função que centra a imagem no array
+def center_array_image(pixel_matrix):
+  data = pixel_matrix.flatten()
+  first_index = next((i for i, x in enumerate(data) if x > 0), None)
+  last_index = 10800 - 1 - next((i for i, x in enumerate(reversed(data)) if x > 0), None)
+
+  sub_arr = [0.0] * 10800
+  if (last_index - first_index) % 2 != 0:
+    count = (10800 - (last_index - first_index + 1)) // 2
+    sub_arr[count:count + (last_index - first_index + 1)] = data[first_index:last_index + 1]
+  elif (last_index - first_index) % 2 == 0:
+    count = (10800 - (last_index - first_index + 1)) // 2
+    sub_arr[count:count + (last_index - first_index + 1)] = data[first_index:last_index + 1]
+
+  return sub_arr
+
 # Guarda as Imagens em Matrizes num ficheiro TXT, de treino
 def loadStoreImagesFileTrain(count, dir_path):
   with open(f'data_file/pixel_data.txt', 'w') as file:
@@ -35,10 +51,11 @@ def loadStoreImagesFileTrain(count, dir_path):
       new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
       pixel_matrix = np.array(new_image)  
       pixel_matrix = 1 - pixel_matrix / 255.0
-      
+
+      centered_matrix = center_array_image(pixel_matrix);
+
       file.write('  [\n');
-      for row in pixel_matrix:
-        file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
+      file.write('\t\t' + ' '.join(map(str, centered_matrix)))
       file.write('  ],\n');  
     file.write(']\n');
 
@@ -54,9 +71,10 @@ def loadStoreImagesFileTest(count, dir_path):
       pixel_matrix = np.array(new_image)  
       pixel_matrix = 1 - pixel_matrix / 255.0
 
+      centered_matrix = center_array_image(pixel_matrix);
+
       file.write('  [\n');
-      for row in pixel_matrix:
-        file.write('  ' + '  ' + ' '.join(map(str, row)) + '\n');
+      file.write('\t\t' + ' '.join(map(str, centered_matrix)))
       file.write('  ],\n');  
     file.write(']\n');
 
@@ -69,7 +87,9 @@ def loadStoreImagesFileNpz(count, dir_path):
     pixel_matrix = np.array(new_image)  
     pixel_matrix = 1 - pixel_matrix / 255.0
 
-    image_dict[f"img011-{i}"] = pixel_matrix
+    centered_matrix = center_array_image(pixel_matrix);
+
+    image_dict[f"img011-{i}"] = centered_matrix
 
   np.savez("data_file/image_data.npz", **image_dict)
 
@@ -82,9 +102,9 @@ def loadStoreImages(count, dir_path):
     pixel_matrix = np.array(new_image)  
     pixel_matrix = 1 - pixel_matrix / 255.0
 
-    flattened_pixels = pixel_matrix.flatten()
+    centered_matrix = center_array_image(pixel_matrix);
 
-    images_data.append(flattened_pixels)
+    images_data.append(centered_matrix)
 
   return images_data
 
@@ -110,16 +130,14 @@ def takePicture():
 
 # Função de renomear os nomes dos ficheiros
 def rename():
-  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\dataset"  
+  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\Perceptron_Project\Perceptron_Project\dataset"  
 
   ficheiros = sorted(os.listdir(pasta))
 
-  for i, ficheiro in enumerate(ficheiros, start=500):
+  for i, ficheiro in enumerate(ficheiros, start=54):
     extensao = os.path.splitext(ficheiro)[1]  
     novo_nome = f"img-{i}{extensao}"  
     antigo_caminho = os.path.join(pasta, ficheiro)
     novo_caminho = os.path.join(pasta, novo_nome)
       
     os.rename(antigo_caminho, novo_caminho)
-
-#rename()

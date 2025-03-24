@@ -15,7 +15,7 @@ NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
 NUM_TRAIN_SAMPLES = train_samples
 NUM_TEST_SAMPLES = test_number 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
-NUM_EPOCHS = 300 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
+NUM_EPOCHS = 350 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
 LEARNING_RATE = 0.01 #O learning rate determina o quão grande ou pequeno será o ajuste dos pesos do modelo a cada iteração do treinamento.
                     #Se a taxa de aprendizagem for muito alta, o modelo pode não convergir ou saltar para uma solução sub ótima.
                     #Se for muito baixa, o modelo pode demorar muito para aprender, ou ficar preso em um mínimo local (convergir muito lentamente).
@@ -27,22 +27,20 @@ LEARNING_RATE = 0.01 #O learning rate determina o quão grande ou pequeno será 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
 train_labels = arr.array('i', [0] * NUM_TRAIN_SAMPLES)
 # Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
-for i in range(0, 100): 
+for i in range(0, 54): 
     train_labels[i] = 1
 
 # Obtenção dos dados do Ficheiro NPZ
 train_data = [];
 data = np.load('data_file/image_data.npz') #,mmap_mode="r")
 for key in data.files:
-  train_data.append(data[key].flatten());
+  train_data.append(data[key]);
 
 # Resize e conversão das imagens de teste
 test_data = loadStoreImages(test_number, dir_path=dir_path_test)  
 
-# Pesos 
+# Pesos & Bias
 weights = [0] * NUM_PIXELS_AMOSTRA #vetor de pesos  
-
-# Bias
 bias = 0
 
 ##############################################
