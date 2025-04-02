@@ -8,6 +8,9 @@ class Perceptron:
     self.weights = None
     self.bias = None
 
+  def step(self, x):
+    return np.where(x >=0, 1, 0)
+  
   def sigmoid(self, x):
     return 1 / (1 + np.exp(-x))
   
