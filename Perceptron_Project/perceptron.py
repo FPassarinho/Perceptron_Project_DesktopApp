@@ -18,9 +18,9 @@ LEARNING_RATE = 0.01 #O learning rate determina o quão grande ou pequeno será 
                     # Valores médios:  (0.001 a 0.01)
                     # Valores altos:  (0.1 a 1.0)
 
-loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
-loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
-loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=dir_path_test)
+# loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
+# loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
+# loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=dir_path_test)
 
 # O train labels servem para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
@@ -46,7 +46,7 @@ bias = 0
 ##############################################
 def activation_function(type, soma_dos_pesos_amostra):
   if type == 'STEP_FUNCTION':
-    return np.where(soma_dos_pesos_amostra >=0, 1, 0)
+    return np.where(soma_dos_pesos_amostra >= 0, 1, 0)
   elif type == 'SIGMOID':
     return 1 / (1 + np.exp(-soma_dos_pesos_amostra))  
 
@@ -70,14 +70,14 @@ def train():
       epoch_loss += error ** 2
       weights += LEARNING_RATE * error * train_data[sample]
       bias += LEARNING_RATE * error
-      
+
     if epoch % 10 == 0:
       print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
 
 ############
 ### Main ###
 ############
-def main():
+if __name__ == "__main__":
   train()
 
   print("\n\n *** ESTE PERCEPTRON considera que é um A quando a certeza for maior que 0.8 **\n");
@@ -92,6 +92,3 @@ def main():
       print(f"\nAcho que é um A com {prediction_percentage:.2f} por cento de certeza\n");
     else:
       print(f"\nAcho que não é um A com {100-prediction_percentage:.2f} por cento de certeza\n");
-
-if __name__ == "__main__":
-    main()
