@@ -35,7 +35,7 @@ def center_array_image(pixel_matrix):
     count = (10800 - (last_index - first_index + 1)) // 2
     sub_arr[count:count + (last_index - first_index + 1)] = data[first_index:last_index + 1]
   elif (last_index - first_index) % 2 == 0:
-    count = (10800 - (last_index - first_index + 1)) // 2
+    count = (10800 - (last_index - first_index)) // 2
     sub_arr[count:count + (last_index - first_index + 1)] = data[first_index:last_index + 1]
 
   return sub_arr
