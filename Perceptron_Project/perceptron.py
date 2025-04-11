@@ -3,12 +3,12 @@ from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então não se pode guardar os dados em bidimensional, 
 # caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
-dir_path_train = 'dataset'
-dir_path_test= 'test_images'
 
+DIR_PATH_TRAIN = 'dataset'
+DIR_PATH_TEST= 'test_images'
 NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
-NUM_TRAIN_SAMPLES = countImages(dir_path=dir_path_train)
-NUM_TEST_SAMPLES = countImages(dir_path=dir_path_test)
+NUM_TRAIN_SAMPLES = countImages(dir_path=DIR_PATH_TRAIN)
+NUM_TEST_SAMPLES = countImages(dir_path=DIR_PATH_TEST)
 
 # Pesos & Bias
 weights = np.random.uniform(-0.05, 0.05, NUM_PIXELS_AMOSTRA)
@@ -34,7 +34,6 @@ list_functions_options = [
 ### EPOCHS - 350 / LEARNING RATE - 0.01 //// TIME - 3,61 seconds
 ### EPOCHS - 700 / LEARNING RATE - 0.005 //// TIME - 7,61 seconds
 ### EPOCHS - 3500 / LEARNING RATE - 0.001 //// TIME - 38,58 seconds /// Bateria - 98,41
-
 #### STEP-FUNCTION
 ### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0,24 seconds
 ### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 4,88 seconds
@@ -59,7 +58,7 @@ for key in data.files:
   train_data.append(data[key]);
 
 # Resize e conversão das imagens de teste
-test_data = loadStoreImages(NUM_TEST_SAMPLES, dir_path=dir_path_test)  
+test_data = loadStoreImages(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)  
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
@@ -92,7 +91,6 @@ def train(epochs, learning_rate, function):
 
     if epoch % 10 == 0:
       print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
-
 
 ################
 ### Template ###
