@@ -1,4 +1,5 @@
 import time
+import os
 from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então não se pode guardar os dados em bidimensional, 
@@ -13,6 +14,12 @@ NUM_TEST_SAMPLES = countImages(dir_path=DIR_PATH_TEST)
 # Pesos & Bias
 weights = np.random.uniform(-0.05, 0.05, NUM_PIXELS_AMOSTRA)
 bias = 0
+
+arquivos = [
+    "data_file/image_data.npz",
+    "data_file/pixel_data.txt",
+    "data_file/pixel_data_test.txt"
+]
 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
@@ -38,27 +45,11 @@ list_functions_options = [
 ### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0,24 seconds
 ### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 4,88 seconds
 
-
-###Funções de conversão
-# loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
-# loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=dir_path_train) 
-# loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=dir_path_test)
-
-
 # O train labels servem para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
 train_labels = np.zeros(NUM_TRAIN_SAMPLES, dtype=int)
 # Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
 train_labels[:54] = 1  
-
-# Obtenção dos dados do Ficheiro NPZ
-train_data = [];
-data = np.load('data_file/image_data.npz')
-for key in data.files:
-  train_data.append(data[key]);
-
-# Resize e conversão das imagens de teste
-test_data = loadStoreImages(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)  
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
@@ -102,13 +93,22 @@ def template():
   print("\n3 - Sigmoid / 3500 epochs / 0.001 learning Rate")
   print("\n4 - Step_Function / 20 epochs / 0.01 learning Rate")
   print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
+  print("\n6 - Left the program ")
   
 ############
 ### Main ###
 ############
 if __name__ == "__main__":
   template()
-  numberMenu = int(input("\nYour opttion -> : "))
+
+  while True:
+    numberMenu = int(input("\nYour opttion -> : "))
+    if numberMenu in [1,2,3,4,5]:
+      break
+    elif numberMenu == 6:
+      exit()
+    else:
+      print("Wrong option, try again!")
 
   for option in list_functions_options:
     if option["id"] == numberMenu:
@@ -117,14 +117,39 @@ if __name__ == "__main__":
       function = option["function"]
   
   start = time.time()
-  train(num_epochs, learning_rate, function)
 
+  print(os.path.abspath("data_file/image_data.npz"))
+
+  for arquivo in arquivos:
+    if os.path.exists(arquivo):
+        try:
+            os.remove(arquivo)
+            print(f"{arquivo} removido com sucesso.")
+        except Exception as e:
+            print(f"Erro ao remover {arquivo}: {e}")
+    else:
+        print(f"{arquivo} não existe.")
+
+  loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
+  loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
+  loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)
+
+  # Obtenção dos dados do Ficheiro NPZ
+  train_data = [];
+  with np.load('data_file/image_data.npz') as data:
+    for key in data.files:
+      train_data.append(data[key]);
+    
+  # Resize e conversão das imagens de teste
+  test_data = loadStoreImages(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)  
+
+  train(num_epochs, learning_rate, function)
+  
   for i in range(NUM_TEST_SAMPLES):
     print(f"\n\nTesting image {i+1}... ")
 
     prediction = predict(function, test_data[i])
     if function == "SIGMOID":
-      print("\n\n *** ESTE PERCEPTRON considera que é um A quando a certeza for maior que 0.8 ***\n");
       prediction_percentage = prediction * 100;
 
       if prediction_percentage >= 80:
