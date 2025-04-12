@@ -1,10 +1,11 @@
 import time
 import os
+import glob
 from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então não se pode guardar os dados em bidimensional, 
 # caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
-
+DIR_PATH_DATA_FILE = 'data_file'
 DIR_PATH_TRAIN = 'dataset'
 DIR_PATH_TEST= 'test_images'
 NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
@@ -16,9 +17,9 @@ weights = np.random.uniform(-0.05, 0.05, NUM_PIXELS_AMOSTRA)
 bias = 0
 
 arquivos = [
-    "data_file/image_data.npz",
-    "data_file/pixel_data.txt",
-    "data_file/pixel_data_test.txt"
+  "data_file/image_data.npz",
+  "data_file/pixel_data.txt",
+  "data_file/pixel_data_test.txt"
 ]
 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
@@ -95,12 +96,13 @@ def template():
   print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
   print("\n6 - Left the program ")
   
+
 ############
 ### Main ###
 ############
 if __name__ == "__main__":
+  #Menu, and definition of functon, num_epochs and learning_rate
   template()
-
   while True:
     numberMenu = int(input("\nYour opttion -> : "))
     if numberMenu in [1,2,3,4,5]:
@@ -115,24 +117,18 @@ if __name__ == "__main__":
       num_epochs = option["num_epochs"]
       learning_rate = option["learning_rate"]
       function = option["function"]
+
   
   start = time.time()
 
-  print(os.path.abspath("data_file/image_data.npz"))
-
-  for arquivo in arquivos:
-    if os.path.exists(arquivo):
-        try:
-            os.remove(arquivo)
-            print(f"{arquivo} removido com sucesso.")
-        except Exception as e:
-            print(f"Erro ao remover {arquivo}: {e}")
-    else:
-        print(f"{arquivo} não existe.")
-
-  loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
-  loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
-  loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)
+  #Verifing if the program have all the files needed
+  if len(os.listdir(DIR_PATH_DATA_FILE)) < 3:
+    files = glob.glob(os.path.join(DIR_PATH_DATA_FILE, '*'))
+    for f in files:
+      os.remove(f)
+    loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
+    loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
+    loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)
 
   # Obtenção dos dados do Ficheiro NPZ
   train_data = [];
@@ -145,23 +141,21 @@ if __name__ == "__main__":
 
   train(num_epochs, learning_rate, function)
   
+  print("\n\nResults:\n")
   for i in range(NUM_TEST_SAMPLES):
-    print(f"\n\nTesting image {i+1}... ")
-
     prediction = predict(function, test_data[i])
-    if function == "SIGMOID":
-      prediction_percentage = prediction * 100;
 
+    if function == "SIGMOID":
+      prediction_percentage = prediction * 100
       if prediction_percentage >= 80:
-        print(f"\nAcho que é um A com {prediction_percentage:.2f} por cento de certeza\n")
+        print(f"Image {i+1} -> I think it's an A with {prediction_percentage:.2f} percent certainty")
       else:
-        print(f"\nAcho que não é um A com {100-prediction_percentage:.2f} por cento de certeza\n")
-    
+        print(f"Image {i+1} -> I think it's not an A with {100 - prediction_percentage:.2f} percent certainty")
     elif function == "STEP_FUNCTION":
       if prediction == 1:
-        print(f"\nAcho que é um A.\n")
+        print(f"Image {i+1} -> I think it's an A.")
       else:
-        print(f"\nAcho que não é um A.\n")
+        print(f"Image {i+1} -> I think it's not an A.")
 
   end = time.time()
-  print(f"Tempo de execução = {end - start:.2f} segundo");
+  print(f"\nExecution time = {end - start:.2f} seconds\n")
