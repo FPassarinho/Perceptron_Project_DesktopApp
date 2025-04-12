@@ -30,27 +30,30 @@ arquivos = [
 # Valores pequenos:  (0.00001 a 0.001)
 # Valores médios:  (0.001 a 0.01)
 # # Valores altos:  (0.1 a 1.0)
-list_functions_options = [
-  {"id":1, "function": "SIGMOID", "num_epochs": 350, "learning_rate": 0.01},
-  {"id":2, "function": "SIGMOID", "num_epochs": 700, "learning_rate": 0.005},
-  {"id":3, "function": "SIGMOID", "num_epochs": 3500, "learning_rate": 0.001},
-  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 20, "learning_rate": 0.01},
-  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001}
-]
 
+###quantas mais imagens existirem, mais epochs são necessários para rodar as imagens
+
+
+list_functions_options = [
+  {"id":1, "function": "SIGMOID", "num_epochs": 450, "learning_rate": 0.01},
+  {"id":2, "function": "SIGMOID", "num_epochs": 950, "learning_rate": 0.005},
+  {"id":3, "function": "SIGMOID", "num_epochs": 4600, "learning_rate": 0.001},
+  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 20, "learning_rate": 0.01},
+  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 350, "learning_rate": 0.00001}
+]
 ### SIGMOID FUNCTION
-### EPOCHS - 350 / LEARNING RATE - 0.01 //// TIME - 3,61 seconds
-### EPOCHS - 700 / LEARNING RATE - 0.005 //// TIME - 7,61 seconds
-### EPOCHS - 3500 / LEARNING RATE - 0.001 //// TIME - 38,58 seconds /// Bateria - 98,41
+###  EPOCHS - 450 / LEARNING RATE - 0.01 //// TIME -  ///Battery - 15,44 seconds
+### EPOCHS - 950 / LEARNING RATE - 0.005 //// TIME -   /// Battery - 30,55 seconds
+### EPOCHS - 4600 / LEARNING RATE - 0.001 //// TIME -  /// Battery - 125 seconds
 #### STEP-FUNCTION
-### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0,24 seconds
-### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 4,88 seconds
+### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0,24 seconds /// Battery - 2.36 segundos
+### EPOCHS - 350 / LEARNING RATE - 0.00001 //// TIME - 4,88 seconds /// Battery - 14,18 segundos
 
 # O train labels servem para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
 # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
 train_labels = np.zeros(NUM_TRAIN_SAMPLES, dtype=int)
 # Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
-train_labels[:54] = 1  
+train_labels[:55] = 1  
 
 ##############################################
 ### funçao calculo da ativaçao do neuronio ###
@@ -89,11 +92,11 @@ def train(epochs, learning_rate, function):
 ################
 def template():
   print("\nWelcome to perceptron, choose the function and options that you pretend!\n")
-  print("\n1 - Sigmoid / 350 epochs / 0.01 learning Rate")
-  print("\n2 - Sigmoid / 700 epochs / 0.005 learning Rate")
-  print("\n3 - Sigmoid / 3500 epochs / 0.001 learning Rate")
+  print("\n1 - Sigmoid / 450 epochs / 0.01 learning Rate")
+  print("\n2 - Sigmoid / 950 epochs / 0.005 learning Rate")
+  print("\n3 - Sigmoid / 4600 epochs / 0.001 learning Rate")
   print("\n4 - Step_Function / 20 epochs / 0.01 learning Rate")
-  print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
+  print("\n5 - Step_Function / 350 epochs / 0.00001 learning Rate")
   print("\n6 - Left the program ")
   
 

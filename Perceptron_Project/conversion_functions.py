@@ -130,11 +130,11 @@ def takePicture():
 
 # Função de renomear os nomes dos ficheiros
 def rename():
-  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\Perceptron_Project\Perceptron_Project\dataset"  
+  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\t"  
 
   ficheiros = sorted(os.listdir(pasta))
 
-  for i, ficheiro in enumerate(ficheiros, start=54):
+  for i, ficheiro in enumerate(ficheiros, start=55):
     extensao = os.path.splitext(ficheiro)[1]  
     novo_nome = f"img-{i}{extensao}"  
     antigo_caminho = os.path.join(pasta, ficheiro)
