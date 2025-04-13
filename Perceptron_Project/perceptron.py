@@ -5,22 +5,15 @@ from conversion_functions import *
 
 #O código está preparado para ler matrizes unidmensionais, então não se pode guardar os dados em bidimensional, 
 # caso se guarde que é o caso, têm de se realizar a conversão de dados para unidmensional.
-DIR_PATH_DATA_FILE = 'data_file'
-DIR_PATH_TRAIN = 'dataset'
-DIR_PATH_TEST= 'test_images'
-NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
-NUM_TRAIN_SAMPLES = countImages(dir_path=DIR_PATH_TRAIN)
-NUM_TEST_SAMPLES = countImages(dir_path=DIR_PATH_TEST)
 
-# Pesos & Bias
+#Constants
+NUM_PIXELS_AMOSTRA = 10800 #número de pixeis de cada imagem 120*90
+DIR_PATH_DATA_FILE = 'data_file'
+DIR_PATH_TEST = 'test_images'
+
+# Activation of weights & bias
 weights = np.random.uniform(-0.05, 0.05, NUM_PIXELS_AMOSTRA)
 bias = 0
-
-arquivos = [
-  "data_file/image_data.npz",
-  "data_file/pixel_data.txt",
-  "data_file/pixel_data_test.txt"
-]
 
 #O número de Training Epochs indica quantas vezes o modelo passará por todo o conjunto de dados de treino durante o treino
 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets) 
@@ -30,10 +23,7 @@ arquivos = [
 # Valores pequenos:  (0.00001 a 0.001)
 # Valores médios:  (0.001 a 0.01)
 # # Valores altos:  (0.1 a 1.0)
-
 ###quantas mais imagens existirem, mais epochs são necessários para rodar as imagens
-
-
 list_functions_options = [
   {"id":1, "function": "SIGMOID", "num_epochs": 450, "learning_rate": 0.01},
   {"id":2, "function": "SIGMOID", "num_epochs": 950, "learning_rate": 0.005},
@@ -49,14 +39,15 @@ list_functions_options = [
 ### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0,24 seconds /// Battery - 2.36 segundos
 ### EPOCHS - 350 / LEARNING RATE - 0.00001 //// TIME - 4,88 seconds /// Battery - 14,18 segundos
 
-# O train labels servem para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
-# então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
-train_labels = np.zeros(NUM_TRAIN_SAMPLES, dtype=int)
-# Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
-train_labels[:55] = 1  
+###### Dataset List
+list_dataset = [
+  {"id":1, "dataset": "datasetA"},
+  {"id":2, "dataset": "datasetK"},
+  {"id":3, "dataset": "datasetSTOP"}
+]
 
 ##############################################
-### funçao calculo da ativaçao do neuronio ###
+### Função calculo da ativaçao do neuronio ###
 ##############################################
 def activation_function(function, soma_dos_pesos_amostra):
   if function == 'STEP_FUNCTION':
@@ -77,7 +68,7 @@ def train(epochs, learning_rate, function):
   global bias, weights
   for epoch in range(epochs):
     epoch_loss = 0
-    for sample in range(NUM_TRAIN_SAMPLES):
+    for sample in range(num_train_samples):
       prediction = predict(function, train_data[sample])
       error = train_labels[sample] - prediction
       epoch_loss += error ** 2
@@ -90,8 +81,14 @@ def train(epochs, learning_rate, function):
 ################
 ### Template ###
 ################
-def template():
-  print("\nWelcome to perceptron, choose the function and options that you pretend!\n")
+def templateDataset():
+  print("Welcome to perceptron, choose the letter of the dataset that you want!")
+  print("\n1 - Dataset A")
+  print("\n2 - Dataset k")
+  print("\n3 - Left the program")
+
+def templatePerceptron():
+  print("\nChoose the function and options that you pretend!\n")
   print("\n1 - Sigmoid / 450 epochs / 0.01 learning Rate")
   print("\n2 - Sigmoid / 950 epochs / 0.005 learning Rate")
   print("\n3 - Sigmoid / 4600 epochs / 0.001 learning Rate")
@@ -99,13 +96,26 @@ def template():
   print("\n5 - Step_Function / 350 epochs / 0.00001 learning Rate")
   print("\n6 - Left the program ")
   
-
 ############
 ### Main ###
 ############
 if __name__ == "__main__":
-  #Menu, and definition of functon, num_epochs and learning_rate
-  template()
+  #Menu, and definition of dataset, function, num_epochs and learning_rate
+  templateDataset()
+  while True:
+    numberDataset = int(input("\nYour opttion -> : "))
+    if numberDataset in [1,2,3]:
+      break
+    elif numberDataset == 3:
+      exit()
+    else:
+      print("Wrong option, try again!")
+
+  for option in list_dataset:
+    if option["id"] == numberDataset:
+      dataset = option["dataset"]
+
+  templatePerceptron()
   while True:
     numberMenu = int(input("\nYour opttion -> : "))
     if numberMenu in [1,2,3,4,5]:
@@ -121,6 +131,17 @@ if __name__ == "__main__":
       learning_rate = option["learning_rate"]
       function = option["function"]
 
+  #Counting the number of train and test samples
+  num_train_samples = countImages(dir_path=dataset)
+  num_test_samples = countImages(dir_path=DIR_PATH_TEST)
+
+  # O train labels servem para dizer caso as imagens que se encontram como train_samples são A ou não mas no projeto isso não se pretende pois partimos do pressuposto que todas são A 
+  # então vamos ter tudo a 1, se houvesse algumas que não fossem meteriamos a 0.
+  train_labels = np.zeros(num_train_samples, dtype=int)
+  # Define os intervalos onde os labels devem ser 1 (Isto permite indicar no dataset onde de facto é A ou a)
+  n = int(num_train_samples/2)
+  train_labels[:n] = 1  
+
   
   start = time.time()
 
@@ -129,9 +150,9 @@ if __name__ == "__main__":
     files = glob.glob(os.path.join(DIR_PATH_DATA_FILE, '*'))
     for f in files:
       os.remove(f)
-    loadStoreImagesFileTrain(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
-    loadStoreImagesFileNpz(NUM_TRAIN_SAMPLES, dir_path=DIR_PATH_TRAIN) 
-    loadStoreImagesFileTest(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)
+    loadStoreImagesFileTrain(num_train_samples, dir_path=dataset) 
+    loadStoreImagesFileNpz(num_train_samples, dir_path=dataset) 
+    loadStoreImagesFileTest(num_test_samples, dir_path=DIR_PATH_TEST)
 
   # Obtenção dos dados do Ficheiro NPZ
   train_data = [];
@@ -140,12 +161,12 @@ if __name__ == "__main__":
       train_data.append(data[key]);
     
   # Resize e conversão das imagens de teste
-  test_data = loadStoreImages(NUM_TEST_SAMPLES, dir_path=DIR_PATH_TEST)  
+  test_data = loadStoreImages(num_test_samples, dir_path=DIR_PATH_TEST)  
 
   train(num_epochs, learning_rate, function)
   
   print("\n\nResults:\n")
-  for i in range(NUM_TEST_SAMPLES):
+  for i in range(num_test_samples):
     prediction = predict(function, test_data[i])
 
     if function == "SIGMOID":
