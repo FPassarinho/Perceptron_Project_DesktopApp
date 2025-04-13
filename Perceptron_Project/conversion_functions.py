@@ -3,10 +3,11 @@ import os
 import cv2
 from PIL import Image
 
-# No for começa com 0 e acaba no count pois 0 é a primeira posição pois as imagens tão numeradas como se fossem vetores e 
-#Count pois como no for o count não é inclusive se o count for 3410 ele vai escreve 3409, que é o que pretendemos 
+# In the for loop, it starts at 0 and ends at count because 0 is the first position,
+# as the images are numbered like vectors.
+# Count is used because the for loop is non-inclusive, so if count is 3410, it will write up to 3409, which is what we want.
 
-# Conta o número de imagens 
+# Counts the number of images
 def countImages(dir_path):
   count = 0
   for path in os.listdir(dir_path):
@@ -14,7 +15,7 @@ def countImages(dir_path):
       count += 1
   return count
 
-# Dá resize à imagem (é necessário um path para definir onde elas vão guardadas)
+# Resizes the image (requires a path to define where they will be saved)
 def resize_images(count, dir_path, dir_path_resize):
   for i in range(0, count):
     image = Image.open(f"{dir_path}/img-{i}.png")
@@ -24,7 +25,7 @@ def resize_images(count, dir_path, dir_path_resize):
     new_image.save(save_path)
   return
 
-# Função que centra a imagem no array
+# Function that centers the image in the array
 def center_array_image(pixel_matrix):
   data = pixel_matrix.flatten()
   first_index = next((i for i, x in enumerate(data) if x > 0), None)
@@ -40,7 +41,7 @@ def center_array_image(pixel_matrix):
 
   return sub_arr
 
-# Guarda as Imagens em Matrizes num ficheiro TXT, de treino
+# Saves images as matrices in a TXT file for training
 def loadStoreImagesFileTrain(count, dir_path):
   with open(f'data_file/pixel_data.txt', 'w') as file:
     file.write('[\n');
@@ -48,18 +49,18 @@ def loadStoreImagesFileTrain(count, dir_path):
     for i in range(0, count):
       image = Image.open(f"{dir_path}/img-{i}.png");
       new_image = image.resize((120, 90));
-      new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-      pixel_matrix = np.array(new_image)  
+      new_image = new_image.convert("L")  # Convert to grayscale
+      pixel_matrix = np.array(new_image)
       pixel_matrix = 1 - pixel_matrix / 255.0
 
-      centered_matrix = center_array_image(pixel_matrix);
+      centered_matrix = center_array_image(pixel_matrix)
 
       file.write('  [\n');
       file.write('\t\t' + ' '.join(map(str, centered_matrix)))
-      file.write('  ],\n');  
+      file.write('  ],\n');
     file.write(']\n');
 
-# Guarda as Imagens em Matrizes num ficheiro TXT, de teste
+# Saves images as matrices in a TXT file for testing
 def loadStoreImagesFileTest(count, dir_path):
   with open(f'data_file/pixel_data_test.txt', 'w') as file:
     file.write('[\n');
@@ -67,77 +68,80 @@ def loadStoreImagesFileTest(count, dir_path):
     for i in range(0, count):
       image = Image.open(f"{dir_path}/img-{i}.png");
       new_image = image.resize((120, 90));
-      new_image = new_image.convert("L")# Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-      pixel_matrix = np.array(new_image)  
+      new_image = new_image.convert("L")  # Convert to grayscale
+      pixel_matrix = np.array(new_image)
       pixel_matrix = 1 - pixel_matrix / 255.0
 
-      centered_matrix = center_array_image(pixel_matrix);
+      centered_matrix = center_array_image(pixel_matrix)
 
       file.write('  [\n');
       file.write('\t\t' + ' '.join(map(str, centered_matrix)))
-      file.write('  ],\n');  
+      file.write('  ],\n');
     file.write(']\n');
 
+# Saves images in a compressed .npz format
 def loadStoreImagesFileNpz(count, dir_path):
   image_dict = {}
   for i in range(0, count):
     image = Image.open(f"{dir_path}/img-{i}.png");
     new_image = image.resize((120, 90));
-    new_image = new_image.convert("L")  # Converter para escala de cinza   ->  # Converte a imagem para escala de cinza e acessa os dados dos pixels
-    pixel_matrix = np.array(new_image)  
+    new_image = new_image.convert("L")  # Convert to grayscale
+    pixel_matrix = np.array(new_image)
     pixel_matrix = 1 - pixel_matrix / 255.0
 
-    centered_matrix = center_array_image(pixel_matrix);
+    centered_matrix = center_array_image(pixel_matrix)
 
     image_dict[f"img011-{i}"] = centered_matrix
 
   np.savez("data_file/image_data.npz", **image_dict)
 
+# Loads and stores images for testing (returns list of pixel arrays)
 def loadStoreImages(count, dir_path):
   images_data = []
   for i in range(0, count):
     image = Image.open(f"{dir_path}/img-{i}.png");
     new_image = image.resize((120, 90));
-    new_image = new_image.convert("L")  # Converter para escala de cinza -> # Converte a imagem para escala de cinza e acessa os dados dos pixels
-    pixel_matrix = np.array(new_image)  
+    new_image = new_image.convert("L")  # Convert to grayscale
+    pixel_matrix = np.array(new_image)
     pixel_matrix = 1 - pixel_matrix / 255.0
 
-    centered_matrix = center_array_image(pixel_matrix);
+    centered_matrix = center_array_image(pixel_matrix)
 
     images_data.append(centered_matrix)
 
   return images_data
 
+# Function to take a picture from the webcam
 def takePicture():
   dir_path_train = 'test_images'
   cam = cv2.VideoCapture(0)
   cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
   cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
   result, image = cam.read()
-  count = countImages(dir_path_train)#é so count pois as imagens estão numeradas igual é sua posição nos vetores, isso faz com que o 
-                                     #o número de imagem delas seja menos 1 do que o total delas.
-                                     
+  count = countImages(dir_path_train)  # just count, since the image numbers match their position in the vector
+                                       # this makes the image number one less than the total
+
   if result:
-    cv2.imshow("Foto", image);
+    cv2.imshow("Photo", image);
     cv2.imwrite(f"test_images/img-{count}.png", image);
     cv2.waitKey(0)
-    cv2.destroyWindow("Foto")
+    cv2.destroyWindow("Photo")
   else:
     print("No image detected");
 
   cam.release()
   cv2.destroyAllWindows()
 
-# Função de renomear os nomes dos ficheiros
+# Function to rename file names
 def rename():
-  pasta = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\t"  
+  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\t"
 
-  ficheiros = sorted(os.listdir(pasta))
+  files = sorted(os.listdir(folder))
 
-  for i, ficheiro in enumerate(ficheiros, start=55):
-    extensao = os.path.splitext(ficheiro)[1]  
-    novo_nome = f"img-{i}{extensao}"  
-    antigo_caminho = os.path.join(pasta, ficheiro)
-    novo_caminho = os.path.join(pasta, novo_nome)
-      
-    os.rename(antigo_caminho, novo_caminho)
+  for i, file in enumerate(files, start=55):
+    extension = os.path.splitext(file)[1]
+    new_name = f"img-{i}{extension}"
+    old_path = os.path.join(folder, file)
+    new_path = os.path.join(folder, new_name)
+
+    os.rename(old_path, new_path)
