@@ -9,7 +9,6 @@ from conversion_functions import *
 
 # Constants
 NUM_PIXELS_AMOSTRA = 10800  # number of pixels per image 120*90
-DIR_PATH_DATA_FILE = 'data_file'
 DIR_PATH_TEST = 'test_images'
 
 # Activation of weights & bias
@@ -42,9 +41,9 @@ list_functions_options = [
 
 # Dataset List
 list_dataset = [
-  {"id":1, "dataset": "datasetA", "word": "A"}, ###130 images
-  {"id":2, "dataset": "datasetK", "word": "K"}, ###100 images
-  {"id":3, "dataset": "datasetSTOP", "word": "STOP"}
+  {"id":1, "dataset": "datasets/datasetA", "word": "A"}, ###130 images
+  {"id":2, "dataset": "datasets/datasetK", "word": "K"}, ###100 images
+  {"id":3, "dataset": "datsets/datasetSTOP", "word": "STOP"}
 ]
 
 ##############################################
@@ -95,7 +94,7 @@ def templatePerceptron():
   print("\n3 - Sigmoid / 5100 epochs / 0.001 learning Rate")
   print("\n4 - Step_Function / 40 epochs / 0.01 learning Rate")
   print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
-  print("\n6 - Leave the program ")
+  print("\n7 - Leave the program ")
   
 ############
 ### Main ###
@@ -147,24 +146,19 @@ if __name__ == "__main__":
 
   start = time.time()
 
-  # Verify if the program has all required files
-  if len(os.listdir(DIR_PATH_DATA_FILE)) >= 1:
-    files = glob.glob(os.path.join(DIR_PATH_DATA_FILE, '*'))
-    for f in files:
-      os.remove(f)
-
-  loadStoreImagesFileNpz(num_train_samples, dir_path=dataset) 
-  #loadStoreImagesFileTrain(num_train_samples, dir_path=dataset) 
-  #loadStoreImagesFileTest(num_test_samples, dir_path=DIR_PATH_TEST)
+  if not os.path.exists(f'data_file/image_data{word}.npz'):
+    print("\nCreating training files...")
+    loadStoreImagesFileNpz(num_train_samples, dir_path=dataset, word=word) 
 
   # Load data from NPZ file
   train_data = []
-  with np.load('data_file/image_data.npz') as data:
+  with np.load(f'data_file/image_data{word}.npz') as data:
     train_data = np.array([data[key] for key in data.files])
   
   # Resize and convert test images
   test_data = loadStoreImages(num_test_samples, dir_path=DIR_PATH_TEST)  
 
+  print("\nTraining the perceptron...")
   train(num_epochs, learning_rate, function)
   
   print("\n\nResults:\n")

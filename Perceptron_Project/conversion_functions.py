@@ -42,8 +42,8 @@ def center_array_image(pixel_matrix):
   return sub_arr
 
 # Saves images as matrices in a TXT file for training
-def loadStoreImagesFileTrain(count, dir_path):
-  with open(f'data_file/pixel_data.txt', 'w') as file:
+def loadStoreImagesFileTrain(count, dir_path, word):
+  with open(f'data_file/pixel_data{word}.txt', 'w') as file:
     file.write('[\n');
 
     for i in range(0, count):
@@ -61,8 +61,8 @@ def loadStoreImagesFileTrain(count, dir_path):
     file.write(']\n');
 
 # Saves images as matrices in a TXT file for testing
-def loadStoreImagesFileTest(count, dir_path):
-  with open(f'data_file/pixel_data_test.txt', 'w') as file:
+def loadStoreImagesFileTest(count, dir_path, word):
+  with open(f'data_file/pixel_data_test{word}.txt', 'w') as file:
     file.write('[\n');
 
     for i in range(0, count):
@@ -80,7 +80,7 @@ def loadStoreImagesFileTest(count, dir_path):
     file.write(']\n');
 
 # Saves images in a compressed .npz format
-def loadStoreImagesFileNpz(count, dir_path):
+def loadStoreImagesFileNpz(count, dir_path, word):
   image_dict = {}
   for i in range(0, count):
     image = Image.open(f"{dir_path}/img-{i}.png");
@@ -93,7 +93,7 @@ def loadStoreImagesFileNpz(count, dir_path):
 
     image_dict[f"img011-{i}"] = centered_matrix
 
-  np.savez("data_file/image_data.npz", **image_dict)
+  np.savez(f"data_file/image_data{word}.npz", **image_dict)
 
 # Loads and stores images for testing (returns list of pixel arrays)
 def loadStoreImages(count, dir_path):
@@ -134,11 +134,11 @@ def takePicture():
 
 # Function to rename file names
 def rename():
-  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\datasetK"
+  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\Perceptron_Project\Perceptron_Project\datasets\t"
 
   files = sorted(os.listdir(folder))
 
-  for i, file in enumerate(files, start=50):
+  for i, file in enumerate(files, start=0):
     extension = os.path.splitext(file)[1]
     new_name = f"img-{i}{extension}"
     old_path = os.path.join(folder, file)
