@@ -134,11 +134,11 @@ def takePicture():
 
 # Function to rename file names
 def rename():
-  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\t"
+  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\datasets\datasetK"
 
   files = sorted(os.listdir(folder))
 
-  for i, file in enumerate(files, start=55):
+  for i, file in enumerate(files, start=50):
     extension = os.path.splitext(file)[1]
     new_name = f"img-{i}{extension}"
     old_path = os.path.join(folder, file)

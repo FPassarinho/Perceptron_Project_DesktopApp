@@ -26,25 +26,25 @@ bias = 0
 # High values: (0.1 to 1.0)
 # The more images there are, the more epochs are needed to iterate through them.
 list_functions_options = [
-  {"id":1, "function": "SIGMOID", "num_epochs": 450, "learning_rate": 0.01},
-  {"id":2, "function": "SIGMOID", "num_epochs": 950, "learning_rate": 0.005},
-  {"id":3, "function": "SIGMOID", "num_epochs": 4600, "learning_rate": 0.001},
-  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 20, "learning_rate": 0.01},
-  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 350, "learning_rate": 0.00001}
+  {"id":1, "function": "SIGMOID", "num_epochs": 550, "learning_rate": 0.01},
+  {"id":2, "function": "SIGMOID", "num_epochs": 1050, "learning_rate": 0.005},
+  {"id":3, "function": "SIGMOID", "num_epochs": 5100, "learning_rate": 0.001},
+  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01},
+  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001}
 ]
-### SIGMOID FUNCTION
-###  EPOCHS - 450 / LEARNING RATE - 0.01 //// TIME -  /// Battery - 15.44 seconds
-### EPOCHS - 950 / LEARNING RATE - 0.005 //// TIME -  /// Battery - 30.55 seconds
-### EPOCHS - 4600 / LEARNING RATE - 0.001 //// TIME -  /// Battery - 125 seconds
+### SIGMOID FUNCTION - conversion of fyles included in time
+###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME -  /// Battery - 33.44 seconds
+### EPOCHS - 1050 / LEARNING RATE - 0.005 //// TIME -  /// Battery - 54.12 seconds
+### EPOCHS - 5100 / LEARNING RATE - 0.001 //// TIME -  /// Battery - 220 seconds
 #### STEP-FUNCTION
-### EPOCHS - 20 / LEARNING RATE - 0.01 //// TIME - 0.24 seconds /// Battery - 2.36 seconds
-### EPOCHS - 350 / LEARNING RATE - 0.00001 //// TIME - 4.88 seconds /// Battery - 14.18 seconds
+### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 0.24 seconds /// Battery - 17.36 seconds
+### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 4.88 seconds /// Battery - 34.41 seconds
 
 # Dataset List
 list_dataset = [
-  {"id":1, "dataset": "datasetA"},
-  {"id":2, "dataset": "datasetK"},
-  {"id":3, "dataset": "datasetSTOP"}
+  {"id":1, "dataset": "datasetA", "word": "A"}, ###130 images
+  {"id":2, "dataset": "datasetK", "word": "K"}, ###100 images
+  {"id":3, "dataset": "datasetSTOP", "word": "STOP"}
 ]
 
 ##############################################
@@ -90,11 +90,11 @@ def templateDataset():
 
 def templatePerceptron():
   print("\nChoose the function and options that you prefer!\n")
-  print("\n1 - Sigmoid / 450 epochs / 0.01 learning Rate")
-  print("\n2 - Sigmoid / 950 epochs / 0.005 learning Rate")
-  print("\n3 - Sigmoid / 4600 epochs / 0.001 learning Rate")
-  print("\n4 - Step_Function / 20 epochs / 0.01 learning Rate")
-  print("\n5 - Step_Function / 350 epochs / 0.00001 learning Rate")
+  print("\n1 - Sigmoid / 550 epochs / 0.01 learning Rate")
+  print("\n2 - Sigmoid / 1050 epochs / 0.005 learning Rate")
+  print("\n3 - Sigmoid / 5100 epochs / 0.001 learning Rate")
+  print("\n4 - Step_Function / 40 epochs / 0.01 learning Rate")
+  print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
   print("\n6 - Leave the program ")
   
 ############
@@ -115,6 +115,7 @@ if __name__ == "__main__":
   for option in list_dataset:
     if option["id"] == numberDataset:
       dataset = option["dataset"]
+      word = option["word"]
 
   templatePerceptron()
   while True:
@@ -147,13 +148,14 @@ if __name__ == "__main__":
   start = time.time()
 
   # Verify if the program has all required files
-  if len(os.listdir(DIR_PATH_DATA_FILE)) < 3:
+  if len(os.listdir(DIR_PATH_DATA_FILE)) >= 1:
     files = glob.glob(os.path.join(DIR_PATH_DATA_FILE, '*'))
     for f in files:
       os.remove(f)
-    loadStoreImagesFileTrain(num_train_samples, dir_path=dataset) 
-    loadStoreImagesFileNpz(num_train_samples, dir_path=dataset) 
-    loadStoreImagesFileTest(num_test_samples, dir_path=DIR_PATH_TEST)
+
+  loadStoreImagesFileNpz(num_train_samples, dir_path=dataset) 
+  #loadStoreImagesFileTrain(num_train_samples, dir_path=dataset) 
+  #loadStoreImagesFileTest(num_test_samples, dir_path=DIR_PATH_TEST)
 
   # Load data from NPZ file
   train_data = []
@@ -172,14 +174,14 @@ if __name__ == "__main__":
     if function == "SIGMOID":
       prediction_percentage = prediction * 100
       if prediction_percentage >= 80:
-        print(f"Image {i+1} -> I think it's an A with {prediction_percentage:.2f} percent certainty")
+        print(f"Image {i+1} -> I think it's an {word} with {prediction_percentage:.2f} percent certainty")
       else:
-        print(f"Image {i+1} -> I think it's not an A with {100 - prediction_percentage:.2f} percent certainty")
+        print(f"Image {i+1} -> I think it's not an {word} with {100 - prediction_percentage:.2f} percent certainty")
     elif function == "STEP_FUNCTION":
       if prediction == 1:
-        print(f"Image {i+1} -> I think it's an A.")
+        print(f"Image {i+1} -> I think it's an {word}.")
       else:
-        print(f"Image {i+1} -> I think it's not an A.")
+        print(f"Image {i+1} -> I think it's not an {word}.")
 
   end = time.time()
   print(f"\nExecution time = {end - start:.2f} seconds\n")
