@@ -1,6 +1,5 @@
 import time
 import os
-import glob
 from conversion_functions import *
 
 # The code is prepared to read one-dimensional matrices,
@@ -32,12 +31,12 @@ list_functions_options = [
   {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001} #STOP NEED 1000 (more images)(learning rate of 0.00001 is the only that works)
 ]
 ### SIGMOID FUNCTION - conversion of fyles included in time
-###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME -  /// Battery - 33.44 seconds
-### EPOCHS - 1050 / LEARNING RATE - 0.005 //// TIME -  /// Battery - 54.12 seconds
-### EPOCHS - 5100 / LEARNING RATE - 0.001 //// TIME -  /// Battery - 220 seconds
+###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME - 11,46 /// Battery - 33.44 seconds
+### EPOCHS - 1050 / LEARNING RATE - 0.005 //// TIME - 17,39  /// Battery - 54.12 seconds
+### EPOCHS - 5100 / LEARNING RATE - 0.001 //// TIME - 70.27 /// Battery - 220 seconds
 #### STEP-FUNCTION
-### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 0.24 seconds /// Battery - 17.36 seconds
-### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 4.88 seconds /// Battery - 34.41 seconds
+### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 4,01 seconds /// Battery - 17.36 seconds
+### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 8.30 seconds /// Battery - 34.41 seconds
 
 # Dataset List
 list_dataset = [
