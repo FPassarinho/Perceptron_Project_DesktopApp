@@ -28,8 +28,8 @@ list_functions_options = [
   {"id":1, "function": "SIGMOID", "num_epochs": 550, "learning_rate": 0.01},
   {"id":2, "function": "SIGMOID", "num_epochs": 1050, "learning_rate": 0.005},
   {"id":3, "function": "SIGMOID", "num_epochs": 5100, "learning_rate": 0.001},
-  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01},
-  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001}
+  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01}, 
+  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001} #STOP NEED 1000 (more images)(learning rate of 0.00001 is the only that works)
 ]
 ### SIGMOID FUNCTION - conversion of fyles included in time
 ###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME -  /// Battery - 33.44 seconds
@@ -42,8 +42,8 @@ list_functions_options = [
 # Dataset List
 list_dataset = [
   {"id":1, "dataset": "datasets/datasetA", "word": "A"}, ###130 images
-  {"id":2, "dataset": "datasets/datasetK", "word": "K"}, ###100 images
-  {"id":3, "dataset": "datsets/datasetSTOP", "word": "STOP"}
+  {"id":2, "dataset": "datasets/datasetK", "word": "K"}, ###130 images
+  {"id":3, "dataset": "datasets/datasetSTOP", "word": "STOP"} ###146
 ]
 
 ##############################################
@@ -85,7 +85,8 @@ def templateDataset():
   print("Welcome to perceptron, choose the letter of the dataset that you want!")
   print("\n1 - Dataset A")
   print("\n2 - Dataset k")
-  print("\n3 - Leave the program")
+  print("\n3 - Dataset STOP")
+  print("\n4 - Leave the program")
 
 def templatePerceptron():
   print("\nChoose the function and options that you prefer!\n")
@@ -94,7 +95,7 @@ def templatePerceptron():
   print("\n3 - Sigmoid / 5100 epochs / 0.001 learning Rate")
   print("\n4 - Step_Function / 40 epochs / 0.01 learning Rate")
   print("\n5 - Step_Function / 400 epochs / 0.00001 learning Rate")
-  print("\n7 - Leave the program ")
+  print("\n6 - Leave the program ")
   
 ############
 ### Main ###
@@ -104,7 +105,7 @@ if __name__ == "__main__":
   templateDataset()
   while True:
     numberDataset = int(input("\nYour option -> : "))
-    if numberDataset in [1,2,3]:
+    if numberDataset in [1,2,3,4]:
       break
     elif numberDataset == 3:
       exit()
