@@ -134,7 +134,7 @@ def takePicture():
 
 # Function to rename file names
 def rename():
-  folder = r"C:\Filipe\Informatica_Faculdade\Investigacao\IA\Perceptron_Project\Perceptron_Project\datasets\datasetSTOP"
+  folder = r"---"
 
   files = sorted(os.listdir(folder))
 
