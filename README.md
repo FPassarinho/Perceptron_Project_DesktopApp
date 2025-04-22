@@ -1,4 +1,4 @@
 # Perceptron_Project
- Scientific Initiation Project!
+Scientific Initiation Project!
 
 
