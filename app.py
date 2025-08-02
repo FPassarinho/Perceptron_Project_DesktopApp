@@ -1,37 +1,18 @@
-import webview
-import time
-import os
-from PySide6.QtWidgets import QApplication
+from flask import Flask, render_template
 
-class API:
-    def run_model(self):
-        # Replace this with your perceptron logic
-        return "Perceptron model executed successfully!"
+app = Flask(__name__)
 
-def maximize_window(window):
-    time.sleep(0.5)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    app = QApplication([])
-    screen = app.primaryScreen()
-    size = screen.size()
-    width = size.width()
-    height = size.height()
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
-    window.resize(width, height)
-    window.move(0, 0)
-
+@app.route('/perceptron')
+def perceptron():
+    return render_template('perceptron.html')
 
 if __name__ == '__main__':
-    icon_path = os.path.abspath("client/img/favicon.ico")
-    api = API()
-    window = webview.create_window(
-        title="MIND OF A PERCEPTRON",
-        url="client/index.html",
-        js_api=api,
-        width=800,    
-        height=600,   
-        resizable=True, 
-        fullscreen=False, 
-        frameless=False   
-    )
-    webview.start(maximize_window, window, icon=icon_path, gui='qt')
+    app.run(debug=True)

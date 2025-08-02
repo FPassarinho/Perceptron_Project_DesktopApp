@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/perceptron.css') }}"
+    />
+    <script src="{{ url_for('static', filename='javascript/perceptron.js') }}"></script>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='img/favicon.ico') }}"
+    />
+    <title>MIND OF A PERCEPTRON</title>
+  </head>
+  <body>
+    <header>
+      <div class="header">
+        <a href="/">
+          <img
+            class="logo"
+            src="{{ url_for('static', filename='img/logo.png') }}"
+            alt="Polytechnic Setúbal Logo"
+          />
+        </a>
+        <div class="top_text">
+          <h1>MIND OF A PERCEPTRON</h1>
+        </div>
+        <a href="https://ips.pt/">
+          <img
+            class="logo_polytechnic"
+            src="{{ url_for('static', filename='img/polytechnic_setubal_logo.png') }}"
+            alt="Polytechnic Setúbal Logo"
+          />
+        </a>
+      </div>
+    </header>
+    <div>
+      <button onclick="aboutRedirect()">About</button>
+    </div>
+    <div class="toolbar">
+      <button id="penButton">Pen</button>
+      <button id="rubberButton">Rubber</button>
+      <button id="clearButton">Clear</button>
+      <button id="submitButton">Submit</button>
+    </div>
+    <canvas id="drawBoard"></canvas>
+  </body>
+</html>
+
+- Ficheiro perceptron Barra horizontal File, Executar, Quit Texto introdutório a
+explicar que se pode usar imagens já existentes e como se pode utilizar. - Todos
+os ficheiros Colocar os dois logótipos

@@ -1,0 +1,136 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1,
+h3 {
+  font-family: "Rubik", sans-serif;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 350%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.logo_polytechnic {
+  height: 100px;
+  object-fit: contain;
+}
+
+.logo {
+  height: 120px;
+  object-fit: contain;
+}
+
+.logo img,
+.logo_polytechnic img {
+  width: 100%;
+  display: block;
+}
+
+.logo {
+  align-self: start;
+  margin-left: 20px;
+}
+
+.logo_polytechnic {
+  align-self: end;
+  margin-right: 20px;
+}
+
+.top_text {
+  text-align: center;
+  flex: 1;
+}
+
+/* ----- Content Information -----*/
+.middle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-family: "Rubik", sans-serif;
+  padding: 40px 60px;
+  box-sizing: border-box;
+  gap: 60px;
+}
+
+.text-content {
+  font-size: medium;
+  max-width: 50%;
+  text-align: justify;
+}
+
+.rosenblatt_image {
+  width: 350px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ----- Footer -----*/
+footer {
+  margin-top: auto;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: "Rubik", sans-serif;
+}
+
+.polytechnic p {
+  font-weight: bold;
+  font-family: "Rubik", sans-serif;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  border: none;
+  background-color: #24bcb4;
+  color: #040404;
+  font-size: 16px;
+  color: white;
+  font-family: "Rubik", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 150px;
+}
+
+button:hover {
+  background-color: #049494;
+}
+
+.button-div {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 30px;
+}
+
+.button-wrapper {
+  margin-right: 30px;
+}
