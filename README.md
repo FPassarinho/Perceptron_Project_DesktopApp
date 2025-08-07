@@ -2,7 +2,5 @@
 
 Scientific Initiation Project!
 
-- Bakcend (developed in python to make the calculations)
-- Flask to connect the backend with the frontend
-- HTML, CSS and JavaScript
-- Jinja2 for template
+- Backend (developed in python to make the calculations)
+- Electron forge, com vite, e depois adicionado react, adicionado plugin do react para o vite
