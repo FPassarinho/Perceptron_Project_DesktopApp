@@ -57,11 +57,11 @@ class Perceptron:
     self.train_labels[:n] = 1
 
     # load or create train data
-    if not os.path.exists(f'data_file/image_data{self.word}.npz'):
+    if not os.path.exists(f'perceptron/data_file/image_data{self.word}.npz'):
       print("\nCreating training files...")
       loadStoreImagesFileNpz(self.num_train_samples, dir_path=self.dir_path_train, word=self.word)
 
-    with np.load(f'data_file/image_data{self.word}.npz') as data:
+    with np.load(f'perceptron/data_file/image_data{self.word}.npz') as data:
       self.train_data = np.array([data[key] for key in data.files])
 
     print("\nTraining the perceptron...")
@@ -144,9 +144,9 @@ list_functions_options = [
 
 # Dataset List
 list_dataset = [
-  {"id":1, "dataset": "datasets/datasetA", "word": "A"}, ###130 images
-  {"id":2, "dataset": "datasets/datasetK", "word": "K"}, ###130 images
-  {"id":3, "dataset": "datasets/datasetSTOP", "word": "STOP"} ###146
+  {"id":1, "dataset": "perceptron/datasets/datasetA", "word": "A"}, ###130 images
+  {"id":2, "dataset": "perceptron/datasets/datasetK", "word": "K"}, ###130 images
+  {"id":3, "dataset": "perceptron/datasets/datasetSTOP", "word": "STOP"} ###146
 ]
 
 if __name__ == "__main__":
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     learning_rate=learning_rate,
     num_epochs=num_epochs,
     dir_path_train=dataset,
-    dir_path_test='test_images',
+    dir_path_test='perceptron/test_images',
     function=function,
     word=word
   )

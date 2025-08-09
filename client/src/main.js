@@ -7,12 +7,14 @@ if (started) {
   app.quit();
 }
 
+const iconPath = path.resolve(process.cwd(), "src", "icons", "icon.png");
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    icon: iconPath, // ou icon.ico, depende do seu arquivo
     width: 800,
     height: 600,
-    icon: path.join(__dirname, "assets", "favicon.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -54,6 +56,8 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+console.log("Icon path:", path.join(__dirname, "icons", "icon.png"));
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

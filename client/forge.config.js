@@ -1,10 +1,9 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-const path = require("path");
 
 module.exports = {
   packagerConfig: {
-    icon: path.join(__dirname, "src", "assets", "favicon.ico"),
+    icon: './src/icons/icon',
     asar: true,
   },
   rebuildConfig: {},
