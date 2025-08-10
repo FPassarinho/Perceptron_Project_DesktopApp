@@ -40,9 +40,9 @@ const IndexPage = () => {
             <p>Polytechnic Institute of Setúbal</p>
           </div>
         </div>
-        <div className="button-div">
+        <div className="button-div-index">
           <button
-            className="button-wrapper"
+            className="button-wrapper-index"
             onClick={() => navigate("/perceptron")}
           >
             <i className="bi bi-box-arrow-in-right"></i>
