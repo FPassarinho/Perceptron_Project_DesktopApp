@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import IndexPage from './IndexPage';
-import AboutPage from './AboutPage';
-import PerceptronPage from './PerceptronPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import IndexPage from "./IndexPage";
+import AboutPage from "./AboutPage";
+import PerceptronPage from "./PerceptronPage";
 
 function App() {
   return (

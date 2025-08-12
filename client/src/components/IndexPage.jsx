@@ -1,12 +1,13 @@
 import Header from "./Header";
 import rosenblatt from "../assets/perceptron/rosenblatt.png";
 import { useNavigate } from "react-router-dom";
+import "./indexPage.css";
 
 const IndexPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <>
       <Header />
       <div className="middle">
         <div className="text-content">
@@ -44,12 +45,13 @@ const IndexPage = () => {
           <button
             className="button-wrapper-index"
             onClick={() => navigate("/perceptron")}
+            aria-label="Go to Perceptron Page"
           >
             <i className="bi bi-box-arrow-in-right"></i>
           </button>
         </div>
       </footer>
-    </div>
+    </>
   );
 };
 export default IndexPage;

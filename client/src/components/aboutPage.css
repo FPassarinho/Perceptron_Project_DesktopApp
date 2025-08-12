@@ -1,0 +1,25 @@
+/* ----- ABOUT PAGE ----- */
+.main-div-about {
+  margin-top: 3%;
+  display: flex;
+  flex-direction: row;
+}
+
+.button-div-about {
+  margin-left: 3%;
+  position: fixed;
+  top: 50%;
+}
+
+.text-div-about {
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: justify;
+}
+
+.button-wrapper-about {
+  font-size: 25px;
+  border-radius: 50%;
+  height: 45px;
+  width: 45px;
+}

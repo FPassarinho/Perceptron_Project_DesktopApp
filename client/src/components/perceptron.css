@@ -1,0 +1,25 @@
+/* ----- PERCEPTRON PAGE ----- */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.navbar-div-perceptron button {
+  border-style: solid;
+  border: 2px #040404;
+}
+
+/* Canvas styling */
+#drawBoard {
+  width: 400px;
+  height: 300px;
+  border-radius: 10px;
+  border: 4px solid #040404;
+  background-color: #f0f0f0;
+  display: block;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

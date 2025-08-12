@@ -42,7 +42,6 @@ class Perceptron:
   ###########################
   def predict(self, input):
     return self.activation_function(np.dot(self.weights, input) + self.bias)
-  
 
   ################
   ### Training ###
@@ -97,27 +96,6 @@ class Perceptron:
         else:
           print(f"Image {i+1} -> I think it's not an {self.word}.")
 
-
-################
-### Template ###
-################
-def templateDataset():
-  print("Welcome to perceptron, choose the letter of the dataset that you want!")
-  print("\n1 - Dataset A")
-  print("\n2 - Dataset K")
-  print("\n3 - Dataset STOP")
-  print("\n4 - Leave the program")
-
-def templatePerceptron():
-  print("\nChoose the function and options that you prefer!\n")
-  print("1 - Sigmoid / 550 epochs / 0.01 learning Rate")
-  print("2 - Sigmoid / 1050 epochs / 0.005 learning Rate")
-  print("3 - Sigmoid / 5100 epochs / 0.001 learning Rate")
-  print("4 - Step_Function / 40 epochs / 0.01 learning Rate")
-  print("5 - Step_Function / 400 epochs / 0.00001 learning Rate")
-  print("6 - Leave the program ")
-
-
 # The number of training epochs indicates how many times the model will pass through the entire training dataset.
 # (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets.
 # The learning rate determines how big or small the adjustment of the model’s weights will be at each training iteration.
@@ -149,9 +127,8 @@ list_dataset = [
   {"id":3, "dataset": "perceptron/datasets/datasetSTOP", "word": "STOP"} ###146
 ]
 
-if __name__ == "__main__":
-  # Menu and definition of dataset, letter, function, num_epochs and learning_rate
-  templateDataset()
+def main(self, numberDataset, numberMenu):
+  # Definition of dataset, letter, function, num_epochs and learning_rate
   while True:
     numberDataset = int(input("\nYour option -> : "))
     if numberDataset in [1, 2, 3]:
@@ -166,9 +143,7 @@ if __name__ == "__main__":
       dataset = option["dataset"]
       word = option["word"]
 
-  templatePerceptron()
   while True:
-    numberMenu = int(input("\nYour option -> : "))
     if numberMenu in [1,2,3,4,5]:
       break
     elif numberMenu == 6:
