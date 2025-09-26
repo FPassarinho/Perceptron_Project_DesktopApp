@@ -2,10 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import IndexPage from "./IndexPage";
 import AboutPage from "./AboutPage";
 import PerceptronPage from "./PerceptronPage";
+import Header from "./Header";
 
 function App() {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<IndexPage />} />
         <Route path="/about" element={<AboutPage />} />

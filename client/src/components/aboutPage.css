@@ -5,16 +5,26 @@
   flex-direction: row;
 }
 
-.button-div-about {
-  margin-left: 3%;
-  position: fixed;
-  top: 50%;
-}
-
 .text-div-about {
   margin-left: 10%;
   margin-right: 10%;
   text-align: justify;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.text-div-about h3 {
+  margin-bottom: 10px;
+}
+
+.text-div-about p {
+  line-height: 1.5;
+}
+
+.button-div-about {
+  margin-left: 3%;
+  position: fixed;
 }
 
 .button-wrapper-about {

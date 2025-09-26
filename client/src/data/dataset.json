@@ -1,0 +1,4 @@
+[
+  { "id": 1, "dataset": "perceptron/datasets/datasetA", "word": "A" },
+  { "id": 2, "dataset": "perceptron/datasets/datasetK", "word": "K" }
+]

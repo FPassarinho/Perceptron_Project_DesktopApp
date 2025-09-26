@@ -1,0 +1,7 @@
+[
+  {"id":1, "function": "SIGMOID", "num_epochs": 550, "learning_rate": 0.01},
+  {"id":2, "function": "SIGMOID", "num_epochs": 1050, "learning_rate": 0.005},
+  {"id":3, "function": "SIGMOID", "num_epochs": 5100, "learning_rate": 0.001},
+  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01}, 
+  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001} 
+]

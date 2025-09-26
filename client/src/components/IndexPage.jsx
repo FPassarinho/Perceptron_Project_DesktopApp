@@ -1,4 +1,3 @@
-import Header from "./Header";
 import rosenblatt from "../assets/perceptron/rosenblatt.png";
 import { useNavigate } from "react-router-dom";
 import "./indexPage.css";
@@ -8,7 +7,6 @@ const IndexPage = () => {
 
   return (
     <>
-      <Header />
       <div className="middle">
         <div className="text-content">
           <p>

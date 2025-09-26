@@ -7,9 +7,17 @@
   margin: 20px 0;
 }
 
-.navbar-div-perceptron button {
-  border-style: solid;
-  border: 2px #040404;
+/* ----- Buttons ----- */
+.button-div-perceptron {
+  margin-left: 3%;
+}
+
+.button-div-perceptron button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  width: 150px;
 }
 
 /* Canvas styling */

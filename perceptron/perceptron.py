@@ -1,11 +1,42 @@
-import time
 import os
 import numpy as np
+import json
 from conversion_functions import *
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 # The code is prepared to read one-dimensional matrices,
 # so data cannot be stored in two-dimensional format.
 # If it is stored in 2D (which is the case), a conversion to 1D is required.
+
+# The number of training epochs indicates how many times the model will pass through the entire training dataset.
+# (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets.
+# The learning rate determines how big or small the adjustment of the model’s weights will be at each training iteration.
+# If the learning rate is too high, the model might not converge or jump to a suboptimal solution.
+# If it's too low, training may be too slow or get stuck in a local minimum.
+# Small values: (0.00001 to 0.001)
+# Medium values: (0.001 to 0.01)
+# High values: (0.1 to 1.0)
+# The more images there are, the more epochs are needed to iterate through them.
+### SIGMOID FUNCTION - conversion of fyles included in time /130 images
+###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME - 11,46 /// Battery - 33.44 seconds
+### EPOCHS - 1050 / LEARNING RATE - 0.005 //// TIME - 17,39  /// Battery - 54.12 seconds
+### EPOCHS - 5100 / LEARNING RATE - 0.001 //// TIME - 70.27 /// Battery - 220 seconds
+#### STEP-FUNCTION
+### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 4,01 seconds /// Battery - 17.36 seconds
+### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 8.30 seconds /// Battery - 34.41 seconds
+
+app = Flask(__name__)
+CORS(app)
+
+with open("datasets.json", "r") as f:
+    list_dataset = json.load(f)
+
+with open("functions_options.json") as f:
+    list_functions_options = json.load(f)
+
+base_path = os.path.dirname(os.path.abspath(__file__))
+data_file_dir = os.path.join(base_path, "data_file")
 
 class Perceptron:
   def __init__(self, learning_rate, num_epochs, dir_path_train, dir_path_test, function, word):
@@ -56,14 +87,15 @@ class Perceptron:
     self.train_labels[:n] = 1
 
     # load or create train data
-    if not os.path.exists(f'perceptron/data_file/image_data{self.word}.npz'):
-      print("\nCreating training files...")
-      loadStoreImagesFileNpz(self.num_train_samples, dir_path=self.dir_path_train, word=self.word)
+    npz_path = os.path.join(data_file_dir, f"image_data{self.word}.npz")
 
-    with np.load(f'perceptron/data_file/image_data{self.word}.npz') as data:
-      self.train_data = np.array([data[key] for key in data.files])
+    if not os.path.exists(npz_path):
+        loadStoreImagesFileNpz(self.num_train_samples, dir_path=self.dir_path_train, word=self.word)
 
-    print("\nTraining the perceptron...")
+    with np.load(npz_path) as data:
+        self.train_data = np.array([data[key] for key in data.files])
+
+    # Training the perceptron
     for epoch in range(self.num_epochs):
       epoch_loss = 0
       for i in range(self.num_train_samples):
@@ -77,79 +109,54 @@ class Perceptron:
         print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
 
   def evaluate(self):
-    print("\n\nResults:\n")
+    # Resultados
     # Resize and convert test images
     self.test_data = loadStoreImages(self.num_test_samples, dir_path=self.dir_path_test)
 
+    results = []
     for i in range(self.num_test_samples):
       prediction = self.predict(self.test_data[i])
 
       if self.function == "SIGMOID":
-        prediction_percentage = prediction * 100
+        prediction_percentage = float(prediction * 100)
         if prediction_percentage >= 80:
-          print(f"Image {i+1} -> I think it's an {self.word} with {prediction_percentage:.2f}% certainty.")
+          results.append({
+            "image": i + 1,
+            "prediction": f"I think that is an {self.word} with {prediction_percentage:.2f}",
+        })
         else:
-          print(f"Image {i+1} -> I think it's not an {self.word} with {100 - prediction_percentage:.2f}% certainty.")
+          results.append({
+            "image": i + 1,
+            "prediction": f"I think that is not an {self.word} with {100 - prediction_percentage:.2f}",
+        })
       else:
         if prediction == 1:
-          print(f"Image {i+1} -> I think it's an {self.word}.")
+          results.append({
+            "image": i + 1,
+            "prediction": f"I Think that is an {self.word}",
+        })
         else:
-          print(f"Image {i+1} -> I think it's not an {self.word}.")
+          results.append({
+            "image": i + 1,
+            "prediction": f"I Think that is not an {self.word}",
+        })
 
-# The number of training epochs indicates how many times the model will pass through the entire training dataset.
-# (10–50) for small datasets, 50–200 for medium datasets, 100–500+ for large datasets.
-# The learning rate determines how big or small the adjustment of the model’s weights will be at each training iteration.
-# If the learning rate is too high, the model might not converge or jump to a suboptimal solution.
-# If it's too low, training may be too slow or get stuck in a local minimum.
-# Small values: (0.00001 to 0.001)
-# Medium values: (0.001 to 0.01)
-# High values: (0.1 to 1.0)
-# The more images there are, the more epochs are needed to iterate through them.
-list_functions_options = [
-  {"id":1, "function": "SIGMOID", "num_epochs": 550, "learning_rate": 0.01},
-  {"id":2, "function": "SIGMOID", "num_epochs": 1050, "learning_rate": 0.005},
-  {"id":3, "function": "SIGMOID", "num_epochs": 5100, "learning_rate": 0.001},
-  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01}, 
-  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001} #STOP NEED 1000 (more images)(learning rate of 0.00001 is the only that works)
-]
-### SIGMOID FUNCTION - conversion of fyles included in time
-###  EPOCHS - 550 / LEARNING RATE - 0.01 //// TIME - 11,46 /// Battery - 33.44 seconds
-### EPOCHS - 1050 / LEARNING RATE - 0.005 //// TIME - 17,39  /// Battery - 54.12 seconds
-### EPOCHS - 5100 / LEARNING RATE - 0.001 //// TIME - 70.27 /// Battery - 220 seconds
-#### STEP-FUNCTION
-### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 4,01 seconds /// Battery - 17.36 seconds
-### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 8.30 seconds /// Battery - 34.41 seconds
+    return jsonify(results)
 
-# Dataset List
-list_dataset = [
-  {"id":1, "dataset": "perceptron/datasets/datasetA", "word": "A"}, ###130 images
-  {"id":2, "dataset": "perceptron/datasets/datasetK", "word": "K"}, ###130 images
-  {"id":3, "dataset": "perceptron/datasets/datasetSTOP", "word": "STOP"} ###146
-]
+@app.route('/predict', methods=['POST'])
+def predict():
+  data = request.get_json()
+  numberDataset = data["dataset_id"]
+  numberMenu = data["function_id"]
 
-def main(self, numberDataset, numberMenu):
   # Definition of dataset, letter, function, num_epochs and learning_rate
-  while True:
-    numberDataset = int(input("\nYour option -> : "))
-    if numberDataset in [1, 2, 3]:
-      break
-    elif numberDataset == 4:
-      exit()
-    else:
-      print("Wrong option, try again!")
-
   for option in list_dataset:
     if option["id"] == numberDataset:
       dataset = option["dataset"]
       word = option["word"]
 
-  while True:
-    if numberMenu in [1,2,3,4,5]:
-      break
-    elif numberMenu == 6:
-      exit()
-    else:
-      print("Wrong option, try again!")
+  dataset_path = os.path.join(base_path, "datasets", dataset)
+  test_images_path = os.path.join(base_path, "test_images")
 
   for option in list_functions_options:
     if option["id"] == numberMenu:
@@ -157,19 +164,17 @@ def main(self, numberDataset, numberMenu):
       learning_rate = option["learning_rate"]
       function = option["function"]
 
-  start = time.time()
-
   perceptron = Perceptron(
     learning_rate=learning_rate,
     num_epochs=num_epochs,
-    dir_path_train=dataset,
-    dir_path_test='perceptron/test_images',
+    dir_path_train=dataset_path,
+    dir_path_test=test_images_path,
     function=function,
     word=word
   )
 
   perceptron.train()
-  perceptron.evaluate()
+  return perceptron.evaluate()
 
-  end = time.time()
-  print(f"\nExecution time = {end - start:.2f} seconds\n")
+if __name__ == '__main__':
+  app.run(port=5000, debug=True)
