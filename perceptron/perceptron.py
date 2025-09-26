@@ -176,5 +176,13 @@ def predict():
   perceptron.train()
   return perceptron.evaluate()
 
+@app.route('/datasets', methods=['GET'])
+def datasets():
+  return jsonify(list_dataset);
+
+@app.route('/functions', methods=['GET'])
+def functions():
+  return jsonify(list_functions_options);
+
 if __name__ == '__main__':
   app.run(port=5000, debug=True)
