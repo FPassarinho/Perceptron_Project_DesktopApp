@@ -2,11 +2,29 @@ import { useNavigate } from "react-router-dom";
 import functionOptions from "../data/functionOptions.json";
 import "./perceptron.css";
 
+function predict(id1, id2) {
+  fetch("http://127.0.0.1:5000", {
+    method: "POST", 
+    headers: {
+      "Content-Type": "application/json", 
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.json(); 
+    })
+    .then((result) => {
+      console.log("Server response:", result); a
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
 const PerceptronPage = () => {
   const navigate = useNavigate();
-  // const [selected, setSelected] = useState("");
-
-  // const values = Object.values(functionOptions);
 
   return (
     <>
