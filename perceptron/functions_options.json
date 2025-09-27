@@ -1,7 +1,37 @@
 [
-  {"id":1, "function": "SIGMOID", "num_epochs": 550, "learning_rate": 0.01},
-  {"id":2, "function": "SIGMOID", "num_epochs": 1050, "learning_rate": 0.005},
-  {"id":3, "function": "SIGMOID", "num_epochs": 5100, "learning_rate": 0.001},
-  {"id":4, "function": "STEP_FUNCTION", "num_epochs": 40, "learning_rate": 0.01}, 
-  {"id":5, "function": "STEP_FUNCTION", "num_epochs": 400, "learning_rate": 0.00001} 
+  {
+    "id": 1,
+    "function": "SIGMOID",
+    "num_epochs": 550,
+    "learning_rate": 0.01,
+    "text": "Sigmoid Function / Learning Rate - 0.01 / Epochs - 550"
+  },
+  {
+    "id": 2,
+    "function": "SIGMOID",
+    "num_epochs": 1050,
+    "learning_rate": 0.005,
+    "text": "Sigmoid Function / Learning Rate - 0.005 / Epochs - 1050"
+  },
+  {
+    "id": 3,
+    "function": "SIGMOID",
+    "num_epochs": 5100,
+    "learning_rate": 0.001,
+    "text": "Sigmoid Function / Learning Rate - 0.001 / Epochs - 5100"
+  },
+  {
+    "id": 4,
+    "function": "STEP_FUNCTION",
+    "num_epochs": 40,
+    "learning_rate": 0.01,
+    "text": "Step Function / Learning Rate - 0.01 / Epochs - 40"
+  },
+  {
+    "id": 5,
+    "function": "STEP_FUNCTION",
+    "num_epochs": 400,
+    "learning_rate": 0.00001,
+    "text": "Step Function / Learning Rate - 0.00001 / Epochs - 400"
+  }
 ]

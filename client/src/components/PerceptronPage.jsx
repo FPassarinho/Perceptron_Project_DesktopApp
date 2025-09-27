@@ -1,55 +1,94 @@
 import { useNavigate } from "react-router-dom";
-import functionOptions from "../data/functionOptions.json";
+import { useEffect, useState } from "react";
+import Select from "react-select";
+import Dropzone from "react-dropzone";
+import { fetchDatasets, fetchFunctions } from "../services/apiServices";
+import SimpleImageSlider from "react-simple-image-slider";
 import "./perceptron.css";
 
-function predict(id1, id2) {
-  fetch("http://127.0.0.1:5000", {
-    method: "POST", 
-    headers: {
-      "Content-Type": "application/json", 
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok " + response.statusText);
-      }
-      return response.json(); 
-    })
-    .then((result) => {
-      console.log("Server response:", result); a
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
 const PerceptronPage = () => {
   const navigate = useNavigate();
+  const [selectedDatasetOption, setSelectedDatasetOption] = useState();
+  const [selectedFunctionOption, setSelectedFunctionOption] = useState();
+  const [datasetsOptions, setDatasetOptions] = useState([]);
+  const [functionsOptions, setFunctionOptions] = useState([]);
 
+  //   const images = [
+  //   { url: "images/1.jpg" },
+  //   { url: "images/2.jpg" },
+  //   { url: "images/3.jpg" },
+  //   { url: "images/4.jpg" },
+  //   { url: "images/5.jpg" },
+  //   { url: "images/6.jpg" },
+  //   { url: "images/7.jpg" },
+  // ];
+
+  useEffect(() => {
+    const getOptions = async () => {
+      try {
+        const dataDataset = await fetchDatasets();
+        const options1 = dataDataset.map((d) => ({
+          value: d,
+          label: d.text,
+        }));
+        setDatasetOptions(options1);
+
+        const dataFunctions = await fetchFunctions();
+        const options2 = dataFunctions.map((f) => ({
+          value: f,
+          label: f.text,
+        }));
+        setFunctionOptions(options2);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    getOptions();
+  }, []);
   return (
     <>
       <div className="button-div-perceptron">
         <button onClick={() => navigate("/about")}>About</button>
         <button id="rubberButton">Quit</button>
         <button id="clearButton">Execute</button>
+        <Select
+          className="my-select"
+          options={datasetsOptions}
+          value={selectedDatasetOption}
+          onChange={setSelectedDatasetOption}
+          placeholder="Select a dataset..."
+        />
+        <Select
+          className="my-select"
+          options={functionsOptions}
+          value={selectedFunctionOption}
+          onChange={setSelectedFunctionOption}
+          placeholder="Select a function..."
+        />
       </div>
-      <div className="options-select">
-        {/* <select value={selected} onChange={(e) => setSelected(e.target.value)}>
-          <option value="">-- Selecione --</option>
-          {values.map((value, index) => (
-            <option key={index} value={value}>
-              {value}
-            </option>
-          ))}
-        </select> */}
-      </div>
-      {/* <div className="toolbar">
-        <button id="penButton">Pen</button>
-        <button id="rubberButton">Rubber</button>
-        <button id="clearButton">Clear</button>
-        <button id="submitButton">Submit</button>
-      </div>
-      <canvas id="drawBoard"></canvas> */}
+      {/* <SimpleImageSlider
+        width={896}
+        height={504}
+        images={images}
+        showBullets={true}
+        showNavs={true}
+      /> */}
+      <Dropzone className="dropzone" onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+        {({ getRootProps, getInputProps }) => (
+          <section>
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              <p>Drag 'n' drop some files here, or click to select files</p>
+            </div>
+          </section>
+        )}
+      </Dropzone>
+      <textarea
+        name="postContent"
+        defaultValue="Your Data is being processed, it will take time, depending on learning rate and the number of epochs!"
+        rows={4}
+        cols={40}
+      />
     </>
   );
 };

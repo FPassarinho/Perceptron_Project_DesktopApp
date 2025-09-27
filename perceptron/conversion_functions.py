@@ -138,10 +138,12 @@ def rename():
 
   files = sorted(os.listdir(folder))
 
-  for i, file in enumerate(files, start=155):
+  for i, file in enumerate(files, start=0):
     extension = os.path.splitext(file)[1]
     new_name = f"img-{i}{extension}"
     old_path = os.path.join(folder, file)
     new_path = os.path.join(folder, new_name)
 
     os.rename(old_path, new_path)
+
+##rename()

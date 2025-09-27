@@ -32,6 +32,9 @@
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.7.1"
+    "react-dropzone": "^14.3.8",
+    "react-router-dom": "^7.7.1",
+    "react-select": "^5.10.2",
+    "react-simple-image-slider": "^2.4.1"
   }
 }

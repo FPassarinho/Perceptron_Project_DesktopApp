@@ -184,5 +184,9 @@ def datasets():
 def functions():
   return jsonify(list_functions_options);
 
+# @app.route('getImages', methods=['GET'])
+# def getImages():
+#   return
+
 if __name__ == '__main__':
   app.run(port=5000, debug=True)

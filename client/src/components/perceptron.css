@@ -19,15 +19,8 @@
   margin-bottom: 5px;
   width: 150px;
 }
-
-/* Canvas styling */
-#drawBoard {
-  width: 400px;
-  height: 300px;
-  border-radius: 10px;
-  border: 4px solid #040404;
-  background-color: #f0f0f0;
-  display: block;
-  margin: 20px auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.my-select {
+  width: 300px;
+  display: inline-block;
+  margin-left: 10px;
 }
