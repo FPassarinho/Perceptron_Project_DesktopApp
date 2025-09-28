@@ -2,7 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
-import { fetchDatasets, fetchFunctions } from "../services/apiServices";
+import {
+  fetchDatasets,
+  fetchFunctions,
+  fetchUpload,
+  fecthPredict,
+} from "../services/apiServices";
 import SimpleImageSlider from "react-simple-image-slider";
 import "./perceptron.css";
 
@@ -12,16 +17,7 @@ const PerceptronPage = () => {
   const [selectedFunctionOption, setSelectedFunctionOption] = useState();
   const [datasetsOptions, setDatasetOptions] = useState([]);
   const [functionsOptions, setFunctionOptions] = useState([]);
-
-  //   const images = [
-  //   { url: "images/1.jpg" },
-  //   { url: "images/2.jpg" },
-  //   { url: "images/3.jpg" },
-  //   { url: "images/4.jpg" },
-  //   { url: "images/5.jpg" },
-  //   { url: "images/6.jpg" },
-  //   { url: "images/7.jpg" },
-  // ];
+  const formData = new FormData();
 
   useEffect(() => {
     const getOptions = async () => {
@@ -45,6 +41,7 @@ const PerceptronPage = () => {
     };
     getOptions();
   }, []);
+
   return (
     <>
       <div className="button-div-perceptron">
@@ -73,12 +70,21 @@ const PerceptronPage = () => {
         showBullets={true}
         showNavs={true}
       /> */}
-      <Dropzone className="dropzone" onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+      <Dropzone
+        onDrop={(acceptedFiles) => {
+          console.log("Arquivos recebidos:", acceptedFiles);
+          fetchUpload(acceptedFiles);
+        }}
+        accept={{ "image/png": [".png"] }}
+      >
         {({ getRootProps, getInputProps }) => (
           <section>
-            <div {...getRootProps()}>
+            <div {...getRootProps()} className="dropzone">
               <input {...getInputProps()} />
-              <p>Drag 'n' drop some files here, or click to select files</p>
+              <p>
+                Drag 'n' drop some files here, or click to select files. When
+                dropped the files will be added automatically
+              </p>
             </div>
           </section>
         )}

@@ -37,6 +37,10 @@ with open("functions_options.json") as f:
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 data_file_dir = os.path.join(base_path, "data_file")
+test_images_path = os.path.join(base_path, "test_images")
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "test_images")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 class Perceptron:
   def __init__(self, learning_rate, num_epochs, dir_path_train, dir_path_test, function, word):
@@ -156,7 +160,6 @@ def predict():
       word = option["word"]
 
   dataset_path = os.path.join(base_path, "datasets", dataset)
-  test_images_path = os.path.join(base_path, "test_images")
 
   for option in list_functions_options:
     if option["id"] == numberMenu:
@@ -187,6 +190,25 @@ def functions():
 # @app.route('getImages', methods=['GET'])
 # def getImages():
 #   return
+
+@app.route('/upload', methods=['POST'])
+def upload():
+  print(request.files)
+  if 'files' not in request.files:
+    return jsonify({'error': 'No file part'})
+  
+  files = request.files.getlist("files")
+  print(request.files)
+  saved_files = []
+
+  numberTestImages = countImages(test_images_path)
+  for i, file in enumerate(files, start=numberTestImages):
+    filename = f"img_{i}.jpg" 
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(file_path)
+    saved_files.append(filename)
+
+  return jsonify({"message": "Files saved with success!", "files": saved_files})
 
 if __name__ == '__main__':
   app.run(port=5000, debug=True)

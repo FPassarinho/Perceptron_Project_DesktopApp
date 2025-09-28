@@ -24,3 +24,12 @@
   display: inline-block;
   margin-left: 10px;
 }
+
+.dropzone {
+  text-align: center;
+  padding: 20px;
+  border: 3px #24bcb4 dashed;
+  border-radius: 3%;
+  width: 60%;
+  margin: auto;
+}

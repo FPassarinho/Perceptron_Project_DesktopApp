@@ -20,6 +20,29 @@ export const fecthPredict = async (id1, id2) => {
     });
 };
 
+export const fetchUpload = async (files) => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+
+    const result = await response.json();
+    console.log("Server response:", result);
+    return result;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
 export const fetchDatasets = async () => {
   const response = await fetch("http://127.0.0.1:5000/datasets", {
     method: "GET",
