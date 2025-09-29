@@ -126,23 +126,21 @@ class Perceptron:
         if prediction_percentage >= 80:
           results.append({
             "image": i + 1,
-            "prediction": f"I think that is an {self.word} with {prediction_percentage:.2f}",
+            "prediction": f"I think that image {i + 1} is an {self.word} with {prediction_percentage:.2f}",
         })
         else:
           results.append({
             "image": i + 1,
-            "prediction": f"I think that is not an {self.word} with {100 - prediction_percentage:.2f}",
+            "prediction": f"I think that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}",
         })
       else:
         if prediction == 1:
           results.append({
-            "image": i + 1,
-            "prediction": f"I Think that is an {self.word}",
+            "prediction": f"I Think that image {i + 1} is an {self.word}",
         })
         else:
           results.append({
-            "image": i + 1,
-            "prediction": f"I Think that is not an {self.word}",
+            "prediction": f"I Think that image {i + 1} is not an {self.word}",
         })
 
     return jsonify(results)
@@ -151,7 +149,7 @@ class Perceptron:
 def predict():
   data = request.get_json()
   numberDataset = data["dataset_id"]
-  numberMenu = data["function_id"]
+  numberFunction = data["function_id"]
 
   # Definition of dataset, letter, function, num_epochs and learning_rate
   for option in list_dataset:
@@ -162,7 +160,7 @@ def predict():
   dataset_path = os.path.join(base_path, "datasets", dataset)
 
   for option in list_functions_options:
-    if option["id"] == numberMenu:
+    if option["id"] == numberFunction:
       num_epochs = option["num_epochs"]
       learning_rate = option["learning_rate"]
       function = option["function"]
