@@ -132,6 +132,13 @@ const AboutPage = () => {
                 This keeps processing fast while maintaining enough detail.
               </li>
               <li>
+                <strong>Dataset labeling:</strong> In the training dataset, each
+                image has metadata indicating the correct letter. To create a
+                meaningful learning task, half of the images are labeled as
+                positive (the target letter) and the other half as negative (not
+                the target letter).
+              </li>
+              <li>
                 <strong>Initialization:</strong> The perceptron class sets up
                 weights, bias, the selected activation function, learning rate,
                 and number of epochs.

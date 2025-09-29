@@ -28,7 +28,7 @@ const PerceptronPage = () => {
 
   // State for prediction results and images
   const [predictResult, setPredictResult] = useState(
-    "Your Data is being processed, it will take time depending on learning rate and the number of epochs!"
+    "Your results will be displayed and it can take up to 1 minute, depending on the function, learning rate, number of epochs, and whether the .npz file has already been created."
   );
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
