@@ -17,17 +17,26 @@ import "./perceptron.css";
 
 const PerceptronPage = () => {
   const navigate = useNavigate();
+
+  // State for dropdown selections
   const [selectedDatasetOption, setSelectedDatasetOption] = useState();
   const [selectedFunctionOption, setSelectedFunctionOption] = useState();
+
+  // State for dropdown options
   const [datasetsOptions, setDatasetOptions] = useState([]);
   const [functionsOptions, setFunctionOptions] = useState([]);
+
+  // State for prediction results and images
   const [predictResult, setPredictResult] = useState(
     "Your Data is being processed, it will take time depending on learning rate and the number of epochs!"
   );
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Loading state for predictions
   const [loading, setLoading] = useState(false);
 
+  // Fetch datasets and functions on mount
   useEffect(() => {
     const getOptions = async () => {
       try {
@@ -51,6 +60,7 @@ const PerceptronPage = () => {
     getOptions();
   }, []);
 
+  // Fetch images on mount
   useEffect(() => {
     const getImages = async () => {
       try {
@@ -63,6 +73,7 @@ const PerceptronPage = () => {
     getImages();
   }, []);
 
+  // Execute perceptron prediction
   const handleExecute = async () => {
     if (!selectedDatasetOption || !selectedFunctionOption) {
       toast.error("Select a dataset or function before starting!", {
@@ -81,10 +92,14 @@ const PerceptronPage = () => {
         hideProgressBar: true,
         theme: "colored",
       });
+
+      // Call backend for prediction
       const response = await fecthPredict(
         selectedDatasetOption.value.id,
         selectedFunctionOption.value.id
       );
+
+      // Concatenate predictions into text
       const predictionText = response.map((p) => p.prediction).join("\n");
       setPredictResult(predictionText);
     } catch (err) {
@@ -100,6 +115,7 @@ const PerceptronPage = () => {
     }
   };
 
+  // Delete currently selected image
   const handleDeleteImage = async () => {
     if (images.length === 0) return;
 
@@ -115,6 +131,7 @@ const PerceptronPage = () => {
         theme: "colored",
       });
 
+      // Update local state after deletion
       const updatedImages = images.filter((img, idx) => idx !== currentIndex);
       setImages(updatedImages);
       setCurrentIndex((prev) =>
@@ -135,6 +152,7 @@ const PerceptronPage = () => {
     <>
       <div className="container">
         <div className="main-card">
+          {/* Top buttons and dropdowns */}
           <div className="button-div-perceptron">
             <button onClick={() => navigate("/about")}>About</button>
             {images.length > 0 ? (
@@ -172,6 +190,8 @@ const PerceptronPage = () => {
               placeholder="Select a function..."
             />
           </div>
+
+          {/* Drag & drop for image upload */}
           <Dropzone
             onDrop={async (acceptedFiles) => {
               if (acceptedFiles.length > 0) {
@@ -190,6 +210,7 @@ const PerceptronPage = () => {
                 try {
                   await fetchUpload(acceptedFiles);
 
+                  // Refresh image list
                   const dataImages = await fetchImages();
                   setImages(dataImages);
 
@@ -211,6 +232,7 @@ const PerceptronPage = () => {
               }
             }}
             onDropRejected={(fileRejections) => {
+              // Show error for rejected files
               fileRejections.forEach((file) => {
                 toast.error(
                   `File "${file.file.name}" rejected. Only PNG images are allowed.`,
@@ -237,7 +259,10 @@ const PerceptronPage = () => {
               </section>
             )}
           </Dropzone>
+
+          {/* Results and images section */}
           <div className="div-middle">
+            {/* Results textarea */}
             <div className="div-results">
               <label>Results</label>
               <div className="textarea-wrapper">
@@ -256,6 +281,8 @@ const PerceptronPage = () => {
                 />
               </div>
             </div>
+
+            {/* Image slider */}
             <div className="slider-container-wrapper">
               <label>Images</label>
               <div className="slider-container">
@@ -284,4 +311,5 @@ const PerceptronPage = () => {
     </>
   );
 };
+
 export default PerceptronPage;

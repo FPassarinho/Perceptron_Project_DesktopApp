@@ -1,4 +1,4 @@
-/* ----- BUTTONS AND SELECT ----- */
+/* ----- MAIN CARD AND SELECT ----- */
 .container {
   display: flex;
   justify-content: center;
@@ -15,6 +15,7 @@
   flex-direction: column;
 }
 
+/* ----- BUTTONS AND SELECT ----- */
 .button-div-perceptron {
   padding: 15px;
   display: flex;

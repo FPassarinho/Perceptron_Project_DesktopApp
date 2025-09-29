@@ -30,8 +30,14 @@ const AboutPage = () => {
               You’ll be able to test it with pre-loaded images or upload your
               own. You can also tweak the activation function, learning rate,
               and number of training epochs to observe how the perceptron
-              responds. If you want to dive deeper, you can inspect the code or
-              try a Python-only version that runs in the terminal.
+              responds. The training data is stored in <code>.npz</code> files
+              for compact and efficient handling.
+            </p>
+            <p>
+              If you want to dive deeper, you can inspect the code or try a
+              Python-only version that runs in the terminal. Before using these
+              projects, it is highly recommended to read their README files for
+              setup instructions and additional details.
               <ul>
                 <li>
                   <a
@@ -167,7 +173,9 @@ const AboutPage = () => {
               In this section, you’ve learned how the perceptron works in theory
               and in practice. You can experiment with different parameters,
               upload your own images, and even extend the code for more complex
-              neural networks.
+              neural networks. Don’t forget: training data is stored in{" "}
+              <code>.npz</code> format, and the README files of the provided
+              repositories contain important instructions for correct usage.
             </p>
           </div>
         </div>

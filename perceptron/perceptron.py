@@ -1,10 +1,3 @@
-import os
-import numpy as np
-import json
-from conversion_functions import *
-from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
-
 # The code is prepared to read one-dimensional matrices,
 # so data cannot be stored in two-dimensional format.
 # If it is stored in 2D (which is the case), a conversion to 1D is required.
@@ -26,15 +19,25 @@ from flask_cors import CORS
 ### EPOCHS - 40 / LEARNING RATE - 0.01 //// TIME - 4,01 seconds /// Battery - 17.36 seconds
 ### EPOCHS - 400 / LEARNING RATE - 0.00001 //// TIME - 8.30 seconds /// Battery - 34.41 seconds
 
+import os
+import numpy as np
+import json
+from conversion_functions import *
+from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
+
+# Flask app setup
 app = Flask(__name__)
 CORS(app)
 
+# Load datasets and functions configuration
 with open("datasets.json", "r") as f:
     list_dataset = json.load(f)
 
 with open("functions_options.json") as f:
     list_functions_options = json.load(f)
 
+# Define paths
 base_path = os.path.dirname(os.path.abspath(__file__))
 data_file_dir = os.path.join(base_path, "data_file")
 test_images_path = os.path.join(base_path, "test_images")
@@ -42,196 +45,213 @@ test_images_path = os.path.join(base_path, "test_images")
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "test_images")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Base URL for serving uploaded/test images
 BASE_URL = "http://127.0.0.1:5000/perceptron/test_images/"
 
-
+############################################
+# ------------ PERCEPTRON CLASS ------------
+############################################
 class Perceptron:
-  def __init__(self, learning_rate, num_epochs, dir_path_train, dir_path_test, function, word):
-    self.learning_rate  = learning_rate
-    self.num_epochs  = num_epochs
-    self.dir_path_train = dir_path_train
-    self.dir_path_test = dir_path_test
-    self.function = function
-    self.word = word
-    self.num_pixels = 10800 # number of pixels per image 120*90
-    # Activation of weights & bias
-    self.weights = np.random.uniform(-0.05, 0.05, self.num_pixels)
-    self.bias = 0
+    def __init__(self, learning_rate, num_epochs, dir_path_train, dir_path_test, function, word):
+        # Hyperparameters
+        self.learning_rate = learning_rate
+        self.num_epochs = num_epochs
+        self.dir_path_train = dir_path_train
+        self.dir_path_test = dir_path_test
+        self.function = function
+        self.word = word
 
-    self.train_data = None
-    self.train_labels = None
-    self.test_data = None
+        # Each image is resized to 120x90 = 10800 pixels
+        self.num_pixels = 10800  
 
-    # Counting the number of training and test samples
-    self.num_train_samples = countImages(dir_path=dir_path_train)
-    self.num_test_samples = countImages(dir_path=dir_path_test)
+        # Initialize weights and bias
+        self.weights = np.random.uniform(-0.05, 0.05, self.num_pixels)
+        self.bias = 0
 
-  ##############################################
-  ### Neuron Activation Function Calculation ###
-  ##############################################
-  def activation_function(self, x):
-    if self.function == 'STEP_FUNCTION':
-      return np.where(x >= 0, 1, 0)
-    elif self.function == 'SIGMOID':
-      return 1 / (1 + np.exp(-x))
-    
-  ###########################
-  ### Prediction Function ###
-  ###########################
-  def predict(self, input):
-    return self.activation_function(np.dot(self.weights, input) + self.bias)
+        # Placeholders for training/testing data
+        self.train_data = None
+        self.train_labels = None
+        self.test_data = None
 
-  ################
-  ### Training ###
-  ################
-  def train(self):  
-    # Train labels indicate whether the training images are 'A' or not.
-    # In this project we assume all are 'A', so all labels will be 1.
-    # If there were some that were not 'A', we would set those to 0.
-    self.train_labels = np.zeros(self.num_train_samples, dtype=int)
-    # Define the intervals where the labels should be 1 (This indicates where the A's are in the dataset)
-    n = int(self.num_train_samples / 2)
-    self.train_labels[:n] = 1
+        # Count training and testing samples
+        self.num_train_samples = countImages(dir_path=dir_path_train)
+        self.num_test_samples = countImages(dir_path=dir_path_test)
 
-    # load or create train data
-    npz_path = os.path.join(data_file_dir, f"image_data{self.word}.npz")
+    ########################################
+    # Neuron activation function
+    ########################################
+    def activation_function(self, x):
+        if self.function == 'STEP_FUNCTION':
+            return np.where(x >= 0, 1, 0)
+        elif self.function == 'SIGMOID':
+            return 1 / (1 + np.exp(-x))
 
-    if not os.path.exists(npz_path):
-        loadStoreImagesFileNpz(self.num_train_samples, dir_path=self.dir_path_train, word=self.word)
+    ########################################
+    # Prediction (forward pass)
+    ########################################
+    def predict(self, input):
+        return self.activation_function(np.dot(self.weights, input) + self.bias)
 
-    with np.load(npz_path) as data:
-        self.train_data = np.array([data[key] for key in data.files])
+    ########################################
+    # Training (adjust weights & bias)
+    ########################################
+    def train(self):
+        # All training images belong to 'word' (example: 'A')
+        self.train_labels = np.zeros(self.num_train_samples, dtype=int)
+        n = int(self.num_train_samples / 2)  
+        self.train_labels[:n] = 1  # First half marked as positive class
 
-    # Training the perceptron
-    for epoch in range(self.num_epochs):
-      epoch_loss = 0
-      for i in range(self.num_train_samples):
-        prediction = self.predict(self.train_data[i])
-        error = self.train_labels[i] - prediction
-        epoch_loss += error ** 2
-        self.weights += self.learning_rate * error * self.train_data[i]
-        self.bias += self.learning_rate * error
+        # Load or create training dataset in .npz format
+        npz_path = os.path.join(data_file_dir, f"image_data{self.word}.npz")
+        if not os.path.exists(npz_path):
+            loadStoreImagesFileNpz(self.num_train_samples, dir_path=self.dir_path_train, word=self.word)
 
-      if epoch % 10 == 0:
-        print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
+        with np.load(npz_path) as data:
+            self.train_data = np.array([data[key] for key in data.files])
 
-  def evaluate(self):
-    # Resultados
-    # Resize and convert test images
-    self.test_data = loadStoreImages(self.num_test_samples, dir_path=self.dir_path_test)
+        # Training loop
+        for epoch in range(self.num_epochs):
+            epoch_loss = 0
+            for i in range(self.num_train_samples):
+                prediction = self.predict(self.train_data[i])
+                error = self.train_labels[i] - prediction
 
-    results = []
-    for i in range(self.num_test_samples):
-      prediction = self.predict(self.test_data[i])
+                # Mean squared error accumulation
+                epoch_loss += error ** 2
 
-      if self.function == "SIGMOID":
-        prediction_percentage = float(prediction * 100)
-        if prediction_percentage >= 80:
-          results.append({
-            "image": i + 1,
-            "prediction": f"I think that image {i + 1} is an {self.word} with {prediction_percentage:.2f}",
-        })
-        else:
-          results.append({
-            "image": i + 1,
-            "prediction": f"I think that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}",
-        })
-      else:
-        if prediction == 1:
-          results.append({
-            "prediction": f"I Think that image {i + 1} is an {self.word}",
-        })
-        else:
-          results.append({
-            "prediction": f"I Think that image {i + 1} is not an {self.word}",
-        })
+                # Update weights and bias (gradient descent)
+                self.weights += self.learning_rate * error * self.train_data[i]
+                self.bias += self.learning_rate * error
 
-    return jsonify(results)
+            # Print debug info every 10 epochs
+            if epoch % 10 == 0:
+                print(f"Epoch {epoch}: Loss = {epoch_loss:.4f}")
+
+    ########################################
+    # Evaluate model with test dataset
+    ########################################
+    def evaluate(self):
+        self.test_data = loadStoreImages(self.num_test_samples, dir_path=self.dir_path_test)
+        results = []
+
+        for i in range(self.num_test_samples):
+            prediction = self.predict(self.test_data[i])
+
+            # Handle sigmoid separately (percentage confidence)
+            if self.function == "SIGMOID":
+                prediction_percentage = float(prediction * 100)
+                if prediction_percentage >= 80:
+                    results.append({
+                        "image": i + 1,
+                        "prediction": f"I think that image {i + 1} is an {self.word} with {prediction_percentage:.2f}",
+                    })
+                else:
+                    results.append({
+                        "image": i + 1,
+                        "prediction": f"I think that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}",
+                    })
+            else:  # Step function (binary output)
+                if prediction == 1:
+                    results.append({"prediction": f"I Think that image {i + 1} is an {self.word}"})
+                else:
+                    results.append({"prediction": f"I Think that image {i + 1} is not an {self.word}"})
+
+        return jsonify(results)
+
+############################################
+# ------------ FLASK ROUTES ---------------
+############################################
 
 @app.route('/predict', methods=['POST'])
 def predict():
-  data = request.get_json()
-  numberDataset = data["dataset_id"]
-  numberFunction = data["function_id"]
+    # Get request params
+    data = request.get_json()
+    numberDataset = data["dataset_id"]
+    numberFunction = data["function_id"]
 
-  # Definition of dataset, letter, function, num_epochs and learning_rate
-  for option in list_dataset:
-    if option["id"] == numberDataset:
-      dataset = option["dataset"]
-      word = option["word"]
+    # Select dataset & word
+    for option in list_dataset:
+        if option["id"] == numberDataset:
+            dataset = option["dataset"]
+            word = option["word"]
+            dataset_path = os.path.join(base_path, "datasets", dataset)
 
-  dataset_path = os.path.join(base_path, "datasets", dataset)
+    # Select function config
+    for option in list_functions_options:
+        if option["id"] == numberFunction:
+            num_epochs = option["num_epochs"]
+            learning_rate = option["learning_rate"]
+            function = option["function"]
 
-  for option in list_functions_options:
-    if option["id"] == numberFunction:
-      num_epochs = option["num_epochs"]
-      learning_rate = option["learning_rate"]
-      function = option["function"]
+    # Initialize and run perceptron
+    perceptron = Perceptron(
+        learning_rate=learning_rate,
+        num_epochs=num_epochs,
+        dir_path_train=dataset_path,
+        dir_path_test=test_images_path,
+        function=function,
+        word=word
+    )
+    perceptron.train()
+    return perceptron.evaluate()
 
-  perceptron = Perceptron(
-    learning_rate=learning_rate,
-    num_epochs=num_epochs,
-    dir_path_train=dataset_path,
-    dir_path_test=test_images_path,
-    function=function,
-    word=word
-  )
-
-  perceptron.train()
-  return perceptron.evaluate()
-
+# Get list of datasets
 @app.route('/datasets', methods=['GET'])
 def datasets():
-  return jsonify(list_dataset);
+    return jsonify(list_dataset)
 
+# Get list of function configs
 @app.route('/functions', methods=['GET'])
 def functions():
-  return jsonify(list_functions_options);
+    return jsonify(list_functions_options)
 
+# Get uploaded test images (as URLs)
 @app.route('/getImages', methods=['GET'])
 def getImages():
-    
-  image_files = [
-          f for f in os.listdir(UPLOAD_FOLDER)
-          if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f.lower().endswith('.png')
-      ]
-  image_files = sorted(image_files, key=numerical_sort)
+    image_files = [
+        f for f in os.listdir(UPLOAD_FOLDER)
+        if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f.lower().endswith('.png')
+    ]
+    image_files = sorted(image_files, key=numerical_sort)
+    image_urls = [BASE_URL + f for f in image_files]
+    return jsonify(image_urls)
 
-  image_urls = [BASE_URL + f for f in image_files]
-
-  return jsonify(image_urls)
-
+# Serve image by filename
 @app.route('/perceptron/test_images/<path:filename>')
 def serve_image(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
+# Upload new images
 @app.route('/upload', methods=['POST'])
 def upload():
-  print(request.files)
-  if 'files' not in request.files:
-    return jsonify({'error': 'No file part'})
-  
-  files = request.files.getlist("files")
-  print(request.files)
-  saved_files = []
+    if 'files' not in request.files:
+        return jsonify({'error': 'No file part'})
 
-  numberTestImages = countImages(test_images_path)
-  for i, file in enumerate(files, start=numberTestImages):
-    filename = f"img-{i}.png" 
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(file_path)
-    saved_files.append(filename)
+    files = request.files.getlist("files")
+    saved_files = []
 
-  return jsonify({"message": "Files saved with success!", "files": saved_files})
+    # Ensure unique filenames
+    numberTestImages = countImages(test_images_path)
+    for i, file in enumerate(files, start=numberTestImages):
+        filename = f"img-{i}.png"
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+        saved_files.append(filename)
 
+    return jsonify({"message": "Files saved with success!", "files": saved_files})
+
+# Delete specific image
 @app.route('/deleteImage/<filename>', methods=['DELETE'])
 def deleteImage(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
-      return jsonify({"message": f"{filename} deleted successfully!"})
+        os.remove(file_path)  # <--- missing before!
+        return jsonify({"message": f"{filename} deleted successfully!"})
     else:
-      return jsonify({"error": "File not found"}), 404
+        return jsonify({"error": "File not found"}), 404
 
-
+############################################
+# ------------ APP ENTRYPOINT -------------
+############################################
 if __name__ == '__main__':
-  app.run(port=5000, debug=True)
+    app.run(port=5000, debug=True)

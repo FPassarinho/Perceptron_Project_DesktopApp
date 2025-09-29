@@ -31,7 +31,7 @@ const IndexPage = () => {
               Student - <u>filipeamaropassarinho@gmail.com</u>
             </p>
             <p>
-              Fábio Ferrentini Sampaio, Ph.D. - 
+              Fábio Ferrentini Sampaio, Ph.D. -
               <u>fabio.sampaio@estsetubal.ips.pt</u>
             </p>
           </div>

@@ -1,3 +1,4 @@
+// Sends dataset + function IDs to backend for prediction
 export const fecthPredict = async (dataset_id, function_id) => {
   const data = { dataset_id, function_id };
   try {
@@ -20,6 +21,7 @@ export const fecthPredict = async (dataset_id, function_id) => {
   }
 };
 
+// Uploads image files to backend
 export const fetchUpload = async (files) => {
   const formData = new FormData();
   files.forEach((file) => formData.append("files", file));
@@ -43,6 +45,7 @@ export const fetchUpload = async (files) => {
   }
 };
 
+// Fetches available datasets
 export const fetchDatasets = async () => {
   try {
     const response = await fetch("http://127.0.0.1:5000/datasets", {
@@ -63,6 +66,7 @@ export const fetchDatasets = async () => {
   }
 };
 
+// Fetches available functions
 export const fetchFunctions = async () => {
   try {
     const response = await fetch("http://127.0.0.1:5000/functions", {
@@ -83,6 +87,7 @@ export const fetchFunctions = async () => {
   }
 };
 
+// Fetches uploaded images list
 export const fetchImages = async () => {
   try {
     const response = await fetch("http://127.0.0.1:5000/getImages", {
@@ -103,6 +108,7 @@ export const fetchImages = async () => {
   }
 };
 
+// Deletes image by filename
 export const deleteImage = async (filename) => {
   try {
     const response = await fetch(
