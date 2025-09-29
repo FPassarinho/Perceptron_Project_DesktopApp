@@ -134,150 +134,152 @@ const PerceptronPage = () => {
   return (
     <>
       <div className="container">
-        <div className="button-div-perceptron">
-          <button onClick={() => navigate("/about")}>About</button>
-          {images.length > 0 ? (
-            <>
-              <button onClick={handleExecute} id="executerButton">
-                Execute
-              </button>
-              <button
-                className="delete-image-button"
-                onClick={handleDeleteImage}
+        <div className="main-card">
+          <div className="button-div-perceptron">
+            <button onClick={() => navigate("/about")}>About</button>
+            {images.length > 0 ? (
+              <>
+                <button onClick={handleExecute} id="executerButton">
+                  Execute
+                </button>
+                <button
+                  className="delete-image-button"
+                  onClick={handleDeleteImage}
+                >
+                  Delete Image
+                </button>
+              </>
+            ) : (
+              <p
+                className="button-paragraph"
+                style={{ color: "gray", fontStyle: "italic" }}
               >
-                Delete Image
-              </button>
-            </>
-          ) : (
-            <p
-              className="button-paragraph"
-              style={{ color: "gray", fontStyle: "italic" }}
-            >
-              Upload images to enable execution.
-            </p>
-          )}
-          <Select
-            className="my-select"
-            options={datasetsOptions}
-            value={selectedDatasetOption}
-            onChange={setSelectedDatasetOption}
-            placeholder="Select a dataset..."
-          />
-          <Select
-            className="my-select"
-            options={functionsOptions}
-            value={selectedFunctionOption}
-            onChange={setSelectedFunctionOption}
-            placeholder="Select a function..."
-          />
-        </div>
-        <Dropzone
-          onDrop={async (acceptedFiles) => {
-            if (acceptedFiles.length > 0) {
-              toast.success(
-                `${acceptedFiles.length} file(s) added successfully!`,
-                {
-                  position: "top-right",
-                  autoClose: 3000,
-                  hideProgressBar: true,
-                  theme: "colored",
+                Upload images to enable execution.
+              </p>
+            )}
+            <Select
+              className="my-select"
+              options={datasetsOptions}
+              value={selectedDatasetOption}
+              onChange={setSelectedDatasetOption}
+              placeholder="Select a dataset..."
+            />
+            <Select
+              className="my-select"
+              options={functionsOptions}
+              value={selectedFunctionOption}
+              onChange={setSelectedFunctionOption}
+              placeholder="Select a function..."
+            />
+          </div>
+          <Dropzone
+            onDrop={async (acceptedFiles) => {
+              if (acceptedFiles.length > 0) {
+                toast.success(
+                  `${acceptedFiles.length} file(s) added successfully!`,
+                  {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    theme: "colored",
+                  }
+                );
+
+                console.log("Files received:", acceptedFiles);
+
+                try {
+                  await fetchUpload(acceptedFiles);
+
+                  const dataImages = await fetchImages();
+                  setImages(dataImages);
+
+                  toast.success("Image list updated!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: true,
+                    theme: "colored",
+                  });
+                } catch (error) {
+                  console.error("Error uploading or refreshing images:", error);
+                  toast.error("Failed to upload or refresh images!", {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: true,
+                    theme: "colored",
+                  });
                 }
-              );
-
-              console.log("Files received:", acceptedFiles);
-
-              try {
-                await fetchUpload(acceptedFiles);
-
-                const dataImages = await fetchImages();
-                setImages(dataImages);
-
-                toast.success("Image list updated!", {
-                  position: "top-right",
-                  autoClose: 2000,
-                  hideProgressBar: true,
-                  theme: "colored",
-                });
-              } catch (error) {
-                console.error("Error uploading or refreshing images:", error);
-                toast.error("Failed to upload or refresh images!", {
-                  position: "top-right",
-                  autoClose: 4000,
-                  hideProgressBar: true,
-                  theme: "colored",
-                });
               }
-            }
-          }}
-          onDropRejected={(fileRejections) => {
-            fileRejections.forEach((file) => {
-              toast.error(
-                `File "${file.file.name}" rejected. Only PNG images are allowed.`,
-                {
-                  position: "top-right",
-                  autoClose: 4000,
-                  hideProgressBar: true,
-                  theme: "colored",
-                }
-              );
-            });
-          }}
-          accept={{ "image/png": [".png"] }}
-        >
-          {({ getRootProps, getInputProps }) => (
-            <section>
-              <div {...getRootProps()} className="dropzone">
-                <input {...getInputProps()} />
-                <p>
-                  Drag 'n' drop some files here, or click to select files. When
-                  dropped the files will be added automatically
-                </p>
-              </div>
-            </section>
-          )}
-        </Dropzone>
-        <div className="div-middle">
-          <div className="div-results">
-            <label>Results</label>
-            <div className="textarea-wrapper">
-              {loading && (
-                <div className="loading-dots-textarea">
-                  <span>.</span>
-                  <span>.</span>
-                  <span>.</span>
+            }}
+            onDropRejected={(fileRejections) => {
+              fileRejections.forEach((file) => {
+                toast.error(
+                  `File "${file.file.name}" rejected. Only PNG images are allowed.`,
+                  {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: true,
+                    theme: "colored",
+                  }
+                );
+              });
+            }}
+            accept={{ "image/png": [".png"] }}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div {...getRootProps()} className="dropzone">
+                  <input {...getInputProps()} />
+                  <p>
+                    Drag 'n' drop some files here, or click to select files.
+                    When dropped the files will be added automatically
+                  </p>
                 </div>
-              )}
-              <textarea
-                name="postContent"
-                value={loading ? "" : predictResult}
-                onChange={(e) => setPredictResult(e.target.value)}
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="slider-container-wrapper">
-            <label>Images</label>
-            <div className="slider-container">
-              {images.length > 0 ? (
-                <>
-                  <SimpleImageSlider
-                    width={400}
-                    height={300}
-                    images={images.map((img) => ({ url: img }))}
-                    showNavs={true}
-                    onStartSlide={(idx) => setCurrentIndex(idx - 1)}
-                  />
-                  <div className="inline-slider">
-                    {currentIndex + 1} / {images.length}
+              </section>
+            )}
+          </Dropzone>
+          <div className="div-middle">
+            <div className="div-results">
+              <label>Results</label>
+              <div className="textarea-wrapper">
+                {loading && (
+                  <div className="loading-dots-textarea">
+                    <span>.</span>
+                    <span>.</span>
+                    <span>.</span>
                   </div>
-                </>
-              ) : (
-                <div className="no-images-placeholder">No images yet</div>
-              )}
+                )}
+                <textarea
+                  name="postContent"
+                  value={loading ? "" : predictResult}
+                  onChange={(e) => setPredictResult(e.target.value)}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="slider-container-wrapper">
+              <label>Images</label>
+              <div className="slider-container">
+                {images.length > 0 ? (
+                  <>
+                    <SimpleImageSlider
+                      width={400}
+                      height={300}
+                      images={images.map((img) => ({ url: img }))}
+                      showNavs={true}
+                      onStartSlide={(idx) => setCurrentIndex(idx - 1)}
+                    />
+                    <div className="inline-slider">
+                      {currentIndex + 1} / {images.length}
+                    </div>
+                  </>
+                ) : (
+                  <div className="no-images-placeholder">No images yet</div>
+                )}
+              </div>
             </div>
           </div>
+          <ToastContainer />
         </div>
-        <ToastContainer />
       </div>
     </>
   );

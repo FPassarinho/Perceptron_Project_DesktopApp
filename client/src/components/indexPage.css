@@ -1,62 +1,103 @@
-/* ----- INDEX PAGE ----- */
+/* ----- MAIN CONTENT ----- */
 .middle {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 40px 60px;
   gap: 60px;
-  font-size: 1rem;
+  padding: 60px 60px 120px 60px; /* mais espaço para o footer */
+  min-height: 80vh;
+  background-color: #fdfdfd; /* fundo mais claro */
 }
 
 .text-content {
-  max-width: 55%;
+  max-width: 500px;
   text-align: justify;
+  font-size: 1.05rem;
+  color: #2c3e50;
+  line-height: 1.6;
+  background-color: #ffffff; /* sem transparência */
+  padding: 25px 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
+/* ----- IMAGE ----- */
 .rosenblatt_image {
   width: 400px;
   height: 250px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.button-div-index {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
+.rosenblatt_image:hover {
+  transform: scale(1.03);
 }
 
-.button-wrapper-index {
-  padding: 8px 16px;
-  border-radius: 6px;
-  margin-right: 10px;
-  margin-bottom: 5px;
-  width: 150px;
-}
-
+/* ----- FOOTER ----- */
 footer {
-  margin-top: auto;
-  padding: 10px 20px;
-  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 30px;
+  background-color: #24bcb4;
+  color: white;
+  font-size: 0.9rem;
+  text-align: center;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
 }
 
-footer p {
-  line-height: 1.6;
-}
-
 .item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 15px;
+  gap: 5px;
+}
+
+.item h3 {
+  font-size: 1.1rem;
+  margin-bottom: 3px;
+  color: #ffffff;
+}
+
+.item p {
+  color: #f0f0f0;
 }
 
 .polytechnic p {
   font-weight: bold;
+  font-size: 0.95rem;
+}
+
+/* ----- BUTTON ----- */
+.button-div-index {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-wrapper-index {
+  padding: 8px 16px;
+  border-radius: 6px;
+  width: 150px;
+  background-color: #ffffff;
+  color: #24bcb4;
+  border: 2px solid #24bcb4;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.button-wrapper-index:hover {
+  background-color: #24bcb4;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
