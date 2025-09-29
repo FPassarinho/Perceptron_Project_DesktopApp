@@ -132,11 +132,12 @@ const AboutPage = () => {
                 This keeps processing fast while maintaining enough detail.
               </li>
               <li>
-                <strong>Dataset labeling:</strong> In the training dataset, each
-                image has metadata indicating the correct letter. To create a
-                meaningful learning task, half of the images are labeled as
-                positive (the target letter) and the other half as negative (not
-                the target letter).
+                <strong>Dataset labeling:</strong> For training, an array is
+                created to indicate the labels: half of the images are
+                considered positive (the target letter) and the other half
+                negative (not the target letter). This guides the perceptron
+                during learning, even though the images themselves do not
+                contain embedded metadata.
               </li>
               <li>
                 <strong>Initialization:</strong> The perceptron class sets up
@@ -145,8 +146,8 @@ const AboutPage = () => {
               </li>
               <li>
                 <strong>Training:</strong> The perceptron repeatedly predicts
-                outputs for each image and adjusts weights using the error. This
-                repeats for the number of epochs.
+                outputs for each image and adjusts weights and bias using the
+                error. This repeats for the number of epochs.
               </li>
               <li>
                 <strong>Evaluation:</strong> Finally, the perceptron predicts
