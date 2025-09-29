@@ -46,7 +46,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "test_images")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Base URL for serving uploaded/test images
-BASE_URL = "http://127.0.0.1:5000/perceptron/test_images/"
+BASE_URL = "http://127.0.0.1:5000/server/test_images/"
 
 ############################################
 # ------------ PERCEPTRON CLASS ------------
