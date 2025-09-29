@@ -8,6 +8,7 @@ import {
   fetchUpload,
   fecthPredict,
   fetchImages,
+  deleteImage,
 } from "../services/apiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -99,15 +100,62 @@ const PerceptronPage = () => {
     }
   };
 
+  const handleDeleteImage = async () => {
+    if (images.length === 0) return;
+
+    const url = images[currentIndex];
+    const filename = url.split("/").pop();
+
+    try {
+      const response = await deleteImage(filename);
+      toast.success(response.message, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: true,
+        theme: "colored",
+      });
+
+      const updatedImages = images.filter((img, idx) => idx !== currentIndex);
+      setImages(updatedImages);
+      setCurrentIndex((prev) =>
+        prev >= updatedImages.length ? updatedImages.length - 1 : prev
+      );
+    } catch (err) {
+      toast.error("Failed to delete image", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: true,
+        theme: "colored",
+      });
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <div className="container">
         <div className="button-div-perceptron">
           <button onClick={() => navigate("/about")}>About</button>
-          <button id="quitButton">Quit</button>
-          <button onClick={handleExecute} id="executerButton">
-            Execute
-          </button>
+          {images.length > 0 ? (
+            <>
+              <button onClick={handleExecute} id="executerButton">
+                Execute
+              </button>
+              <button
+                className="delete-image-button"
+                onClick={handleDeleteImage}
+              >
+                Delete Image
+              </button>
+            </>
+          ) : (
+            <p
+              className="button-paragraph"
+              style={{ color: "gray", fontStyle: "italic" }}
+            >
+              Upload images to enable execution.
+            </p>
+          )}
           <Select
             className="my-select"
             options={datasetsOptions}
@@ -210,27 +258,21 @@ const PerceptronPage = () => {
           <div className="slider-container-wrapper">
             <label>Images</label>
             <div className="slider-container">
-              {images.length > 0 && (
-                <SimpleImageSlider
-                  width={400}
-                  height={300}
-                  images={images.map((img) => ({ url: img }))}
-                  showNavs={true}
-                  onStartSlide={(idx) => setCurrentIndex(idx - 1)}
-                />
-              )}
-              {images.length > 0 && (
+              {images.length > 0 ? (
                 <>
+                  <SimpleImageSlider
+                    width={400}
+                    height={300}
+                    images={images.map((img) => ({ url: img }))}
+                    showNavs={true}
+                    onStartSlide={(idx) => setCurrentIndex(idx - 1)}
+                  />
                   <div className="inline-slider">
                     {currentIndex + 1} / {images.length}
                   </div>
-                  {/* <button
-                    className="delete-image-button"
-                    onClick={handleDeleteCurrentImage}
-                  >
-                    Delete Image
-                  </button> */}
                 </>
+              ) : (
+                <div className="no-images-placeholder">No images yet</div>
               )}
             </div>
           </div>

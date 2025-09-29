@@ -224,5 +224,14 @@ def upload():
 
   return jsonify({"message": "Files saved with success!", "files": saved_files})
 
+@app.route('/deleteImage/<filename>', methods=['DELETE'])
+def deleteImage(filename):
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    if os.path.exists(file_path):
+      return jsonify({"message": f"{filename} deleted successfully!"})
+    else:
+      return jsonify({"error": "File not found"}), 404
+
+
 if __name__ == '__main__':
   app.run(port=5000, debug=True)

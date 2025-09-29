@@ -102,3 +102,23 @@ export const fetchImages = async () => {
     throw error;
   }
 };
+
+export const deleteImage = async (filename) => {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/deleteImage/${filename}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Error getting images: " + response.statusText);
+    }
+    const result = await response.json();
+    console.log("Server response (images):", result);
+    return result;
+  } catch (error) {
+    console.error("fetchImages error:", error);
+    throw error;
+  }
+};
