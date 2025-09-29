@@ -1,42 +1,61 @@
-/* ----- BUTTONS AND SELECT -----*/
+/* ----- BUTTONS AND SELECT ----- */
 .button-div-perceptron {
   padding: 15px;
   display: flex;
   justify-self: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
 .button-div-perceptron button {
   padding: 8px 16px;
   border-radius: 6px;
-  margin-right: 10px;
-  margin-bottom: 5px;
   width: 150px;
 }
+
 .my-select {
   width: 300px;
   display: inline-block;
-  margin-left: 10px;
 }
 
+/* ----- DROPZONE ----- */
 .dropzone {
   text-align: center;
   padding: 20px;
   border: 3px #24bcb4 dashed;
   border-radius: 3%;
   width: 60%;
-  margin: auto;
+  margin: 20px auto 0 auto;
 }
 
+/* ----- RESULTS AND SLIDER CONTAINER ----- */
 .div-middle {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 20px;
 }
+
+/* ----- RESULTS ----- */
 .div-results {
   display: flex;
   flex-direction: column;
-  margin: 10px;
   align-items: center;
+  width: 440px;
+  height: 350px;
+  box-sizing: border-box;
 }
+
+.div-results label {
+  font-size: x-large;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .div-results textarea {
+  width: 100%;
+  height: 100%;
   padding: 12px;
   box-sizing: border-box;
   border: 2px solid #ccc;
@@ -44,8 +63,92 @@
   background-color: #f8f8f8;
   font-size: large;
   text-align: justify;
+  resize: none;
 }
-.div-results label {
+
+/* ----- LOADING DOTS INSIDE TEXTAREA ----- */
+.textarea-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.loading-dots-textarea {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: gray;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.loading-dots-textarea span {
+  display: inline-block;
+  animation: blink 1.4s infinite both;
+}
+
+.loading-dots-textarea span:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-dots-textarea span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-dots-textarea span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* ----- IMAGE SLIDER ----- */
+.slider-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 440px;
+  height: 350px;
+  box-sizing: border-box;
+}
+
+.slider-container-wrapper label {
   font-size: x-large;
   font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #24bcb4;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  overflow: hidden;
+  padding: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inline-slider {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 7px;
+  font-size: 14px;
+  text-align: center;
 }

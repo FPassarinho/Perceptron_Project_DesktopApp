@@ -23,6 +23,9 @@ const PerceptronPage = () => {
   const [predictResult, setPredictResult] = useState(
     "Your Data is being processed, it will take time depending on learning rate and the number of epochs!"
   );
+  const [images, setImages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getOptions = async () => {
@@ -47,6 +50,18 @@ const PerceptronPage = () => {
     getOptions();
   }, []);
 
+  useEffect(() => {
+    const getImages = async () => {
+      try {
+        const dataImages = await fetchImages();
+        setImages(dataImages);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    getImages();
+  }, []);
+
   const handleExecute = async () => {
     if (!selectedDatasetOption || !selectedFunctionOption) {
       toast.error("Select a dataset or function before starting!", {
@@ -57,6 +72,7 @@ const PerceptronPage = () => {
       });
       return;
     }
+    setLoading(true);
     try {
       toast.success("Execution started!", {
         position: "top-right",
@@ -78,6 +94,8 @@ const PerceptronPage = () => {
         theme: "colored",
       });
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,7 +124,7 @@ const PerceptronPage = () => {
           />
         </div>
         <Dropzone
-          onDrop={(acceptedFiles) => {
+          onDrop={async (acceptedFiles) => {
             if (acceptedFiles.length > 0) {
               toast.success(
                 `${acceptedFiles.length} file(s) added successfully!`,
@@ -119,7 +137,28 @@ const PerceptronPage = () => {
               );
 
               console.log("Files received:", acceptedFiles);
-              fetchUpload(acceptedFiles);
+
+              try {
+                await fetchUpload(acceptedFiles);
+
+                const dataImages = await fetchImages();
+                setImages(dataImages);
+
+                toast.success("Image list updated!", {
+                  position: "top-right",
+                  autoClose: 2000,
+                  hideProgressBar: true,
+                  theme: "colored",
+                });
+              } catch (error) {
+                console.error("Error uploading or refreshing images:", error);
+                toast.error("Failed to upload or refresh images!", {
+                  position: "top-right",
+                  autoClose: 4000,
+                  hideProgressBar: true,
+                  theme: "colored",
+                });
+              }
             }
           }}
           onDropRejected={(fileRejections) => {
@@ -152,22 +191,49 @@ const PerceptronPage = () => {
         <div className="div-middle">
           <div className="div-results">
             <label>Results</label>
-            <textarea
-              name="postContent"
-              value={predictResult}
-              onChange={(e) => setPredictResult(e.target.value)}
-              readOnly
-              rows={15}
-              cols={35}
-            />
+            <div className="textarea-wrapper">
+              {loading && (
+                <div className="loading-dots-textarea">
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                </div>
+              )}
+              <textarea
+                name="postContent"
+                value={loading ? "" : predictResult}
+                onChange={(e) => setPredictResult(e.target.value)}
+                readOnly
+              />
+            </div>
           </div>
-          {/* <SimpleImageSlider
-            width={896}
-            height={504}
-            images={images}
-            showBullets={true}
-            showNavs={true}
-          /> */}
+          <div className="slider-container-wrapper">
+            <label>Images</label>
+            <div className="slider-container">
+              {images.length > 0 && (
+                <SimpleImageSlider
+                  width={400}
+                  height={300}
+                  images={images.map((img) => ({ url: img }))}
+                  showNavs={true}
+                  onStartSlide={(idx) => setCurrentIndex(idx - 1)}
+                />
+              )}
+              {images.length > 0 && (
+                <>
+                  <div className="inline-slider">
+                    {currentIndex + 1} / {images.length}
+                  </div>
+                  {/* <button
+                    className="delete-image-button"
+                    onClick={handleDeleteCurrentImage}
+                  >
+                    Delete Image
+                  </button> */}
+                </>
+              )}
+            </div>
+          </div>
         </div>
         <ToastContainer />
       </div>

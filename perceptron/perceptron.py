@@ -2,7 +2,7 @@ import os
 import numpy as np
 import json
 from conversion_functions import *
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 # The code is prepared to read one-dimensional matrices,
@@ -41,6 +41,9 @@ test_images_path = os.path.join(base_path, "test_images")
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "test_images")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+BASE_URL = "http://127.0.0.1:5000/perceptron/test_images/"
+
 
 class Perceptron:
   def __init__(self, learning_rate, num_epochs, dir_path_train, dir_path_test, function, word):
@@ -185,9 +188,22 @@ def datasets():
 def functions():
   return jsonify(list_functions_options);
 
-# @app.route('getImages', methods=['GET'])
-# def getImages():
-#   return
+@app.route('/getImages', methods=['GET'])
+def getImages():
+    
+  image_files = [
+          f for f in os.listdir(UPLOAD_FOLDER)
+          if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f.lower().endswith('.png')
+      ]
+  image_files = sorted(image_files, key=numerical_sort)
+
+  image_urls = [BASE_URL + f for f in image_files]
+
+  return jsonify(image_urls)
+
+@app.route('/perceptron/test_images/<path:filename>')
+def serve_image(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -201,7 +217,7 @@ def upload():
 
   numberTestImages = countImages(test_images_path)
   for i, file in enumerate(files, start=numberTestImages):
-    filename = f"img_{i}.jpg" 
+    filename = f"img-{i}.png" 
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     file.save(file_path)
     saved_files.append(filename)

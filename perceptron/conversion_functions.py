@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import cv2
+import re
 from PIL import Image
 
 # In the for loop, it starts at 0 and ends at count because 0 is the first position,
@@ -132,6 +133,11 @@ def takePicture():
   cam.release()
   cv2.destroyAllWindows()
 
+#function to order images
+def numerical_sort(value):
+  match = re.search(r'(\d+)', value)
+  return int(match.group(0)) if match else -1
+  
 # Function to rename file names
 def rename():
   folder = r"---"
