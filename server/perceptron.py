@@ -217,7 +217,7 @@ def getImages():
     return jsonify(image_urls)
 
 # Serve image by filename
-@app.route('/perceptron/test_images/<path:filename>')
+@app.route('/server/test_images/<path:filename>')
 def serve_image(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
