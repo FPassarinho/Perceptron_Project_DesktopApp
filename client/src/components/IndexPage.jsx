@@ -32,11 +32,11 @@ const IndexPage = () => {
             </p>
             <p>
               Fábio Ferrentini Sampaio, Ph.D. -
-              <u>fabio.sampaio@estsetubal.ips.pt</u>
+              <u> fabio.sampaio@estsetubal.ips.pt</u>
             </p>
           </div>
           <div className="polytechnic">
-            <p>Polytechnic Institute of Setúbal</p>
+            <p>Polytechnic University of Setúbal</p>
           </div>
         </div>
         <div className="button-div-index">
