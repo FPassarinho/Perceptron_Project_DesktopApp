@@ -252,8 +252,10 @@ const PerceptronPage = () => {
                 <div {...getRootProps()} className="dropzone">
                   <input {...getInputProps()} />
                   <p>
-                    Drag 'n' drop some files here, or click to select files.
-                    When dropped the files will be added automatically
+                    Drag 'n' drop images here, or click to select them. Files
+                    will be added automatically once dropped. For better
+                    results, create your drawings in <strong>Paint</strong> and
+                    use a thicker pencil. Thin lines may reduce accuracy.
                   </p>
                 </div>
               </section>
