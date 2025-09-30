@@ -55,7 +55,9 @@ Provides endpoints for:
 ## Install backend dependencies with:
 
 - cd server
-- pip install flask flask-cors numpy pillow
+- python -m venv venv - to create virtual enviroment
+- venv\Scripts\activate
+- pip install flask flask-cors numpy pillow opencv-python
 
 ## Frontend:
 

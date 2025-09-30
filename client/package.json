@@ -3,9 +3,13 @@
   "productName": "client",
   "version": "1.0.0",
   "description": "Scientific Initiation Project!",
+  "author": "Filipe Passarinho - filipeamaropassarinho@gmail.com / Fábio Sampaio - fabio.sampaio@estsetubal.ips.pt",
   "main": ".vite/build/main.js",
   "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
     "start": "electron-forge start",
+    "build": "vite build",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -14,16 +18,16 @@
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.3",
+    "@electron-forge/cli": "^7.9.0",
     "@electron-forge/maker-deb": "^7.8.3",
     "@electron-forge/maker-rpm": "^7.8.3",
-    "@electron-forge/maker-squirrel": "^7.8.3",
+    "@electron-forge/maker-squirrel": "^7.9.0",
     "@electron-forge/maker-zip": "^7.8.3",
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
     "@electron-forge/plugin-fuses": "^7.8.3",
     "@electron-forge/plugin-vite": "^7.8.3",
     "@electron/fuses": "^1.8.0",
-    "electron": "37.2.6",
+    "electron": "^37.2.6",
     "vite": "^5.4.19"
   },
   "dependencies": {
@@ -37,5 +41,20 @@
     "react-select": "^5.10.2",
     "react-simple-image-slider": "^2.4.1",
     "react-toastify": "^11.0.5"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "extraFiles": [
+          "../server/dist/perceptron.exe"
+        ]
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {}
+        }
+      ]
+    }
   }
 }

@@ -286,7 +286,7 @@ const PerceptronPage = () => {
 
             {/* Image slider */}
             <div className="slider-container-wrapper">
-              <label>Images</label>
+              <label>Test Images</label>
               <div className="slider-container">
                 {images.length > 0 ? (
                   <>

@@ -1,63 +1,63 @@
+// main.js
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
+import { exec } from "child_process";
 import started from "electron-squirrel-startup";
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// Quit if Electron Squirrel installer triggered
 if (started) {
   app.quit();
 }
 
+let backendProcess;
+
 const iconPath = path.resolve(process.cwd(), "src", "icons", "icon.png");
 
+// Cria a janela principal
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    icon: iconPath, // ou icon.ico, depende do seu arquivo
     width: 800,
     height: 600,
+    icon: iconPath,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true, // permite require dentro do renderer
+      contextIsolation: false,
     },
   });
 
-  // and load the index.html of the app.
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
-  } else {
-    mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-    );
-  }
+  // Carrega o frontend
+  const devURL = process.env.MAIN_WINDOW_VITE_DEV_SERVER_URL;
+  const prodPath = path.join(__dirname, "../renderer/index.html"); // ajustar se build estiver em outra pasta
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (devURL) {
+    mainWindow.loadURL(devURL);
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadFile(prodPath);
+  }
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Inicializa o app
 app.whenReady().then(() => {
+  const backendPath = path.join(__dirname, "../server/dist/perceptron.exe"); 
+  backendProcess = exec(`"${backendPath}"`, (err, stdout, stderr) => {
+    if (err) console.error("Backend error:", err);
+    if (stderr) console.error("Backend stderr:", stderr);
+    console.log(stdout);
+  });
+
   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
+  // Para macOS
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Fecha app e backend
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  if (backendProcess) backendProcess.kill();
+  if (process.platform !== "darwin") app.quit();
 });
 
-console.log("Icon path:", path.join(__dirname, "icons", "icon.png"));
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+console.log("Icon path:", iconPath);
