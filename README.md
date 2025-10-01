@@ -74,7 +74,8 @@ Provides endpoints for:
 In one terminal run:
 
 - cd server
-- python perceptron.py
+- venv/Scripts/Activate
+- python server.py
 
 In other terminal run:
 
