@@ -155,6 +155,7 @@ const PerceptronPage = () => {
           {/* Top buttons and dropdowns */}
           <div className="button-div-perceptron">
             <button onClick={() => navigate("/about")}>About</button>
+            <button onClick={() => navigate("/canvas")}>Draw Image</button>
             {images.length > 0 ? (
               <>
                 <button onClick={handleExecute} id="executerButton">
@@ -261,10 +262,6 @@ const PerceptronPage = () => {
               </section>
             )}
           </Dropzone>
-          <canvas 
-            className="canvas"
-          />
-
           {/* Results and images section */}
           <div className="div-middle">
             {/* Results textarea */}

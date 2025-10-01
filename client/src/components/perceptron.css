@@ -17,10 +17,12 @@
 
 /* ----- BUTTONS AND SELECT ----- */
 .button-div-perceptron {
-  padding: 15px;
+  padding: 10px;
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
+  align-items: center; /* Alinha verticalmente no meio */
   justify-content: center;
 }
 
@@ -40,7 +42,7 @@
 }
 
 .my-select {
-  width: 300px;
+  width: 200px;
   display: inline-block;
 }
 
