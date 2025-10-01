@@ -261,6 +261,9 @@ const PerceptronPage = () => {
               </section>
             )}
           </Dropzone>
+          <canvas 
+            className="canvas"
+          />
 
           {/* Results and images section */}
           <div className="div-middle">
