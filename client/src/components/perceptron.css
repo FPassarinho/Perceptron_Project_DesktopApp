@@ -103,9 +103,10 @@
   border: 2px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
-  font-size: large;
+  font-size: medium;
   text-align: justify;
   resize: none;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* ----- LOADING DOTS ----- */

@@ -97,17 +97,17 @@ class Perceptron:
                 if prediction_percentage >= 80:
                     results.append({
                         "image": i + 1,
-                        "prediction": f"I think that image {i + 1} is an {self.word} with {prediction_percentage:.2f}",
+                        "prediction": f"• I am certain that image {i + 1} is a {self.word} with {prediction_percentage:.2f}% confidence!\n"
                     })
                 else:
                     results.append({
                         "image": i + 1,
-                        "prediction": f"I think that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}",
+                        "prediction": f"• I am certain that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}% confidence!\n",
                     })
             else:
                 if prediction == 1:
-                    results.append({"prediction": f"I Think that image {i + 1} is an {self.word}"})
+                    results.append({"prediction": f"• I Think that image {i + 1} is an {self.word}!\n"})
                 else:
-                    results.append({"prediction": f"I Think that image {i + 1} is not an {self.word}"})
+                    results.append({"prediction": f"• I Think that image {i + 1} is not an {self.word}!\n"})
 
         return results
