@@ -1,11 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import Dropzone from "react-dropzone";
 import {
   fetchDatasets,
   fetchFunctions,
-  fetchUpload,
   fecthPredict,
   fetchImages,
   deleteImage,
@@ -191,77 +189,6 @@ const PerceptronPage = () => {
               placeholder="Select a function..."
             />
           </div>
-
-          {/* Drag & drop for image upload */}
-          <Dropzone
-            onDrop={async (acceptedFiles) => {
-              if (acceptedFiles.length > 0) {
-                toast.success(
-                  `${acceptedFiles.length} file(s) added successfully!`,
-                  {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    theme: "colored",
-                  }
-                );
-
-                console.log("Files received:", acceptedFiles);
-
-                try {
-                  await fetchUpload(acceptedFiles);
-
-                  // Refresh image list
-                  const dataImages = await fetchImages();
-                  setImages(dataImages);
-
-                  toast.success("Image list updated!", {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: true,
-                    theme: "colored",
-                  });
-                } catch (error) {
-                  console.error("Error uploading or refreshing images:", error);
-                  toast.error("Failed to upload or refresh images!", {
-                    position: "top-right",
-                    autoClose: 4000,
-                    hideProgressBar: true,
-                    theme: "colored",
-                  });
-                }
-              }
-            }}
-            onDropRejected={(fileRejections) => {
-              // Show error for rejected files
-              fileRejections.forEach((file) => {
-                toast.error(
-                  `File "${file.file.name}" rejected. Only PNG images are allowed.`,
-                  {
-                    position: "top-right",
-                    autoClose: 4000,
-                    hideProgressBar: true,
-                    theme: "colored",
-                  }
-                );
-              });
-            }}
-            accept={{ "image/png": [".png"] }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div {...getRootProps()} className="dropzone">
-                  <input {...getInputProps()} />
-                  <p>
-                    Drag 'n' drop images here, or click to select them. Files
-                    will be added automatically once dropped. For better
-                    results, create your drawings in <strong>Paint</strong> and
-                    use a thicker pencil. Thin lines may reduce accuracy.
-                  </p>
-                </div>
-              </section>
-            )}
-          </Dropzone>
           {/* Results and images section */}
           <div className="div-middle">
             {/* Results textarea */}
