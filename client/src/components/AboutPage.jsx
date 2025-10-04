@@ -96,9 +96,10 @@ const AboutPage = () => {
             <h3>How this program works</h3>
             <p>
               To use the program, you first choose the dataset of test images or
-              upload your own. Then select the letter you want to detect, the
-              activation function, and the preset learning rate and number of
-              epochs.
+              upload your own. You can also draw an image you want to test
+              directly in the program. Then select the letter you want to
+              detect, the activation function, and the preset learning rate and
+              number of epochs.
             </p>
             <p>
               Depending on the chosen function, processing time varies: SIGMOID
@@ -108,9 +109,9 @@ const AboutPage = () => {
             </p>
             <p>
               Once you run it, predictions appear in the “Results” section. You
-              can remove individual images if needed. The program is designed so
-              the perceptron reaches a very low epoch loss, producing reliable
-              predictions.
+              can remove individual images, including ones you drew, if needed.
+              The program is designed so the perceptron reaches a very low epoch
+              loss, producing reliable predictions.
             </p>
           </div>
 

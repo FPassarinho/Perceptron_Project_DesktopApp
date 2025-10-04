@@ -95,7 +95,7 @@ const CanvasPage = () => {
   return (
     <>
       <div className="container">
-        <div className="main-card">
+        <div className="main-card-canvas">
           <div className="button-div-canvas">
             <button
               className="button-wrapper-canvas"
