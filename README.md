@@ -60,7 +60,7 @@ Provides endpoints for:
 - cd server
 - python -m venv venv - to create virtual enviroment
 - venv\Scripts\activate
-- pip install flask flask-cors numpy pillow opencv-python
+- pip install flask flask-cors numpy pillow
 
 ## Frontend
 
