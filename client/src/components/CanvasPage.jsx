@@ -7,46 +7,49 @@ import { fetchUpload } from "../services/apiServices";
 
 const CanvasPage = () => {
   const navigate = useNavigate();
-  const canvasRef = useRef(null);
-  const [drawing, setDrawing] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const canvasRef = useRef(null); // reference to the canvas element
+  const [drawing, setDrawing] = useState(false); // track if user is drawing
+  const [initialized, setInitialized] = useState(false); // ensure canvas is initialized once
 
-  // Inicializa o canvas com fundo branco
+  // Initialize the canvas with a white background
   const initCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas || initialized) return;
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "white"; // fill white background
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
+    ctx.beginPath(); // start a new drawing path
     setInitialized(true);
   };
 
+  // Start drawing when mouse is pressed
   const startDrawing = (e) => {
-    initCanvas(); // garante que fundo branco exista antes de desenhar
+    initCanvas(); // ensure canvas has white background
     setDrawing(true);
-    draw(e);
+    draw(e); // start drawing immediately
   };
 
+  // Stop drawing when mouse is released
   const endDrawing = () => {
     setDrawing(false);
     const ctx = canvasRef.current.getContext("2d");
-    ctx.beginPath();
+    ctx.beginPath(); // reset path to avoid connecting lines
   };
 
+  // Clear canvas and reset background
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "white"; // fundo branco ao limpar
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
   };
 
+  // Save canvas as PNG and upload to backend
   const saveCanvas = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // já tem fundo branco, então só precisa salvar
     canvas.toBlob(async (blob) => {
       if (!blob) return;
 
@@ -60,7 +63,7 @@ const CanvasPage = () => {
           hideProgressBar: true,
           theme: "colored",
         });
-        clearCanvas();
+        clearCanvas(); // clear after upload
       } catch (err) {
         console.error("Upload failed", err);
         toast.error("Upload failed!", {
@@ -73,6 +76,7 @@ const CanvasPage = () => {
     }, "image/png");
   };
 
+  // Draw on canvas
   const draw = (e) => {
     if (!drawing) return;
     const canvas = canvasRef.current;
@@ -82,8 +86,8 @@ const CanvasPage = () => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    ctx.lineWidth = 22;
-    ctx.lineCap = "round";
+    ctx.lineWidth = 22; // brush thickness
+    ctx.lineCap = "round"; // smooth edges
     ctx.strokeStyle = "black";
 
     ctx.lineTo(x, y);
@@ -97,6 +101,7 @@ const CanvasPage = () => {
       <div className="container">
         <div className="main-card-canvas">
           <div className="button-div-canvas">
+            {/* Navigate back to perceptron page */}
             <button
               className="button-wrapper-canvas"
               onClick={() => navigate("/perceptron")}
@@ -105,6 +110,7 @@ const CanvasPage = () => {
             </button>
           </div>
           <h2>Draw the letter that you want to test</h2>
+          {/* Canvas element */}
           <canvas
             className="canvas"
             width={500}
@@ -113,7 +119,7 @@ const CanvasPage = () => {
             onMouseDown={startDrawing}
             onMouseUp={endDrawing}
             onMouseMove={draw}
-            onMouseLeave={endDrawing}
+            onMouseLeave={endDrawing} // stop drawing if cursor leaves canvas
           />
           <div className="canvas-buttons">
             <button onClick={clearCanvas}>Clear</button>

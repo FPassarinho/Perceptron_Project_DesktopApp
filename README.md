@@ -96,6 +96,8 @@ In other terminal run:
 
 ## How the Perceptron Works
 
+> **Note:** The code is extensively commented, explaining the purpose and functionality of each function as well as key logic steps.
+
 ### 1. Preprocessing
 
 - Images are converted to grayscale and normalized (values between 0 and 1).
