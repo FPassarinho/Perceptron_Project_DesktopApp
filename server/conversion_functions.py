@@ -137,6 +137,20 @@ def takePicture():
 def numerical_sort(value):
   match = re.search(r'(\d+)', value)
   return int(match.group(0)) if match else -1
+
+# Function used in the code
+def rename_images(folder):
+    files = sorted(
+        [f for f in os.listdir(folder) if f.lower().endswith(".png")],
+        key=numerical_sort
+    )
+    for i, file in enumerate(files):
+        extension = os.path.splitext(file)[1]
+        new_name = f"img-{i}{extension}"
+        old_path = os.path.join(folder, file)
+        new_path = os.path.join(folder, new_name)
+        if old_path != new_path:
+            os.rename(old_path, new_path)
   
 #Function to rename file names, mainly used during datasets organization
 def rename():

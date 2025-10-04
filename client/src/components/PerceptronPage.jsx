@@ -71,6 +71,16 @@ const PerceptronPage = () => {
     getImages();
   }, []);
 
+  useEffect(() => {
+    if (images.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
+    if (currentIndex >= images.length) {
+      setCurrentIndex(images.length - 1);
+    }
+  }, [images]);
+
   // Execute perceptron prediction
   const handleExecute = async () => {
     if (!selectedDatasetOption || !selectedFunctionOption) {
@@ -129,12 +139,18 @@ const PerceptronPage = () => {
         theme: "colored",
       });
 
-      // Update local state after deletion
-      const updatedImages = images.filter((img, idx) => idx !== currentIndex);
+      const updatedImages = images.filter((_, idx) => idx !== currentIndex);
+
+      let newIndex = 0;
+      if (currentIndex < updatedImages.length) newIndex = currentIndex;
+      else newIndex = Math.max(0, updatedImages.length - 1);
+
+      setCurrentIndex(newIndex);
       setImages(updatedImages);
-      setCurrentIndex((prev) =>
-        prev >= updatedImages.length ? updatedImages.length - 1 : prev
-      );
+
+      setTimeout(() => {
+        setCurrentIndex(newIndex);
+      }, 0);
     } catch (err) {
       toast.error("Failed to delete image", {
         position: "top-right",
@@ -156,14 +172,14 @@ const PerceptronPage = () => {
             <button onClick={() => navigate("/canvas")}>Draw Image</button>
             {images.length > 0 ? (
               <>
-                <button onClick={handleExecute} id="executerButton">
-                  Execute
-                </button>
                 <button
                   className="delete-image-button"
                   onClick={handleDeleteImage}
                 >
                   Delete Image
+                </button>
+                <button onClick={handleExecute} id="executerButton">
+                  Execute
                 </button>
               </>
             ) : (
@@ -222,10 +238,12 @@ const PerceptronPage = () => {
                       height={300}
                       images={images.map((img) => ({ url: img }))}
                       showNavs={true}
-                      onStartSlide={(idx) => setCurrentIndex(idx - 1)}
+                      startIndex={currentIndex} // mantém posição correta
+                      onStartSlide={(idx) => setCurrentIndex(idx - 1)} // ajusta índice (base 0)
                     />
                     <div className="inline-slider">
-                      {currentIndex + 1} / {images.length}
+                      {images.length > 0 ? currentIndex + 1 : 0} /{" "}
+                      {images.length}
                     </div>
                   </>
                 ) : (

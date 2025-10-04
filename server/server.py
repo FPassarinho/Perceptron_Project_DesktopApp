@@ -121,6 +121,7 @@ def deleteImage(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
+        rename_images(UPLOAD_FOLDER)
         return jsonify({"message": f"{filename} deleted successfully!"})
     else:
         return jsonify({"error": "File not found"}), 404
