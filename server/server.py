@@ -23,7 +23,8 @@ def resource_path(relative_path):
 # ------------------------------
 # Paths for datasets, test images, and preprocessed data
 # ------------------------------
-datasets_path = resource_path("datasets")
+datasets_json_path  = resource_path("datasets.json")
+functions_json_path  = resource_path("functions_options.json")
 test_images_path = resource_path("test_images")
 data_file_path = resource_path("data_file")  # Folder for storing .npz files
 
@@ -38,10 +39,10 @@ CORS(app)
 # - datasets.json: contains available datasets and corresponding words
 # - functions_options.json: contains activation function options, learning rates, and epochs
 # ------------------------------
-with open("datasets.json", "r") as f:
+with open(datasets_json_path, "r") as f:
     list_dataset = json.load(f)
 
-with open("functions_options.json") as f:
+with open(functions_json_path, "r") as f:
     list_functions_options = json.load(f)
 
 # ------------------------------
