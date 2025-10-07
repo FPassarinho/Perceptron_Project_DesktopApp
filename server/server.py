@@ -127,7 +127,7 @@ def getImages():
         if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f.lower().endswith('.png')
     ]
     image_files = sorted(image_files, key=numerical_sort)
-    image_urls = [BASE_URL + f for f in image_files if f]
+    image_urls = [BASE_URL + f for f in image_files]
     return jsonify(image_urls)
 
 # ------------------------------
