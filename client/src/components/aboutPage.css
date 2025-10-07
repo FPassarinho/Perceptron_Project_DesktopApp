@@ -28,10 +28,17 @@
   padding-bottom: 5px;
 }
 
+.text-div-about strong {
+  color: #2c3e50;
+}
+
+.text-div-about h4 {
+  color: #2c3e50;
+}
+
 .text-div-about p {
   line-height: 1.7;
   font-size: 1rem;
-  color: #34495e;
 }
 
 .button-div-about {
@@ -83,16 +90,15 @@
   background: #f1f1f1;
 }
 
-
 .text-div-about ul,
 .text-div-about ol {
-  padding-left: 1.5rem; 
-  margin: 10px 0; 
+  padding-left: 1.5rem;
+  margin: 10px 0;
 }
 
 .text-div-about li {
-  margin-bottom: 8px; 
-  line-height: 1.6; 
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 
 .text-div-about ul li::marker,

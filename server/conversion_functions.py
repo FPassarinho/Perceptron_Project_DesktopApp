@@ -103,7 +103,7 @@ def loadStoreImagesFileNpz(count, dir_path, word):
     # Save all images in a single .npz file for efficiency
     np.savez(f"data_file/image_data{word}.npz", **image_dict)
 
-# Loads images from directory and converts to 1D arrays (used for testing)
+# Loads images from directory
 def loadStoreImages(count, dir_path):
     images_data = []
     for i in range(0, count):

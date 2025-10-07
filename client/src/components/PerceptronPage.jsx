@@ -16,41 +16,34 @@ import "./perceptron.css";
 const PerceptronPage = () => {
   const navigate = useNavigate();
 
-  // State for dropdown selections
+  // Dropdown states
   const [selectedDatasetOption, setSelectedDatasetOption] = useState();
   const [selectedFunctionOption, setSelectedFunctionOption] = useState();
 
-  // State for dropdown options
   const [datasetsOptions, setDatasetOptions] = useState([]);
   const [functionsOptions, setFunctionOptions] = useState([]);
 
-  // State for prediction results and images
-  const [predictResult, setPredictResult] = useState(
-    "Your results will be displayed and it can take up to 1 minute, depending on the function, learning rate, number of epochs, and whether the .npz file has already been created."
-  );
+  // Images and predictions
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [predictResults, setPredictResults] = useState([]);
 
-  // Loading state for predictions
   const [loading, setLoading] = useState(false);
+  const [deleteDisabled, setDeleteDisabled] = useState(false);
 
-  // Fetch datasets and functions on mount
+  // Fetch datasets and functions
   useEffect(() => {
     const getOptions = async () => {
       try {
         const dataDataset = await fetchDatasets();
-        const options1 = dataDataset.map((d) => ({
-          value: d,
-          label: d.text,
-        }));
-        setDatasetOptions(options1);
+        setDatasetOptions(
+          dataDataset.map((d) => ({ value: d, label: d.text }))
+        );
 
         const dataFunctions = await fetchFunctions();
-        const options2 = dataFunctions.map((f) => ({
-          value: f,
-          label: f.text,
-        }));
-        setFunctionOptions(options2);
+        setFunctionOptions(
+          dataFunctions.map((f) => ({ value: f, label: f.text }))
+        );
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -58,27 +51,25 @@ const PerceptronPage = () => {
     getOptions();
   }, []);
 
-  // Fetch images on mount
+  // Fetch images
   useEffect(() => {
     const getImages = async () => {
       try {
         const dataImages = await fetchImages();
         setImages(dataImages);
+        setPredictResults(
+          new Array(dataImages.length).fill("Prediction will appear here.")
+        );
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error("Failed to fetch images:", error);
       }
     };
     getImages();
   }, []);
 
+  // Adjust currentIndex if images are removed
   useEffect(() => {
-    if (images.length === 0) {
-      setCurrentIndex(0);
-      return;
-    }
-    if (currentIndex >= images.length) {
-      setCurrentIndex(images.length - 1);
-    }
+    if (currentIndex >= images.length) setCurrentIndex(images.length - 1);
   }, [images]);
 
   // Execute perceptron prediction
@@ -101,15 +92,13 @@ const PerceptronPage = () => {
         theme: "colored",
       });
 
-      // Call backend for prediction
       const response = await fecthPredict(
         selectedDatasetOption.value.id,
         selectedFunctionOption.value.id
       );
 
-      // Concatenate predictions into text
-      const predictionText = response.map((p) => p.prediction).join("\n");
-      setPredictResult(predictionText);
+      const resultsArray = response.map((p) => p.prediction);
+      setPredictResults(resultsArray);
     } catch (err) {
       toast.error("Error while trying to predict!", {
         position: "top-right",
@@ -123,10 +112,11 @@ const PerceptronPage = () => {
     }
   };
 
-  // Delete currently selected image
+  // Delete image
   const handleDeleteImage = async () => {
-    if (images.length === 0) return;
+    if (images.length === 0 || deleteDisabled) return;
 
+    setDeleteDisabled(true);
     const url = images[currentIndex];
     const filename = url.split("/").pop();
 
@@ -140,17 +130,13 @@ const PerceptronPage = () => {
       });
 
       const updatedImages = images.filter((_, idx) => idx !== currentIndex);
+      const updatedResults = predictResults.filter(
+        (_, idx) => idx !== currentIndex
+      );
 
-      let newIndex = 0;
-      if (currentIndex < updatedImages.length) newIndex = currentIndex;
-      else newIndex = Math.max(0, updatedImages.length - 1);
-
-      setCurrentIndex(newIndex);
       setImages(updatedImages);
-
-      setTimeout(() => {
-        setCurrentIndex(newIndex);
-      }, 0);
+      setPredictResults(updatedResults);
+      setCurrentIndex(Math.min(currentIndex, updatedImages.length - 1));
     } catch (err) {
       toast.error("Failed to delete image", {
         position: "top-right",
@@ -159,103 +145,85 @@ const PerceptronPage = () => {
         theme: "colored",
       });
       console.error(err);
+    } finally {
+      setTimeout(() => setDeleteDisabled(false), 2000);
     }
   };
 
   return (
-    <>
-      <div className="container">
-        <div className="main-card">
-          {/* Top buttons and dropdowns */}
-          <div className="button-div-perceptron">
-            <button onClick={() => navigate("/about")}>About</button>
-            <button onClick={() => navigate("/canvas")}>Draw Image</button>
-            {images.length > 0 ? (
-              <>
-                <button
-                  className="delete-image-button"
-                  onClick={handleDeleteImage}
-                >
-                  Delete Image
-                </button>
-                <button onClick={handleExecute} id="executerButton">
-                  Execute
-                </button>
-              </>
-            ) : (
-              <p
-                className="button-paragraph"
-                style={{ color: "gray", fontStyle: "italic" }}
+    <div className="container">
+      <div className="main-card">
+        {/* Top Buttons and Dropdowns */}
+        <div className="button-div-perceptron">
+          <button onClick={() => navigate("/about")}>About</button>
+          <button onClick={() => navigate("/canvas")}>Draw Image</button>
+          {images.length > 0 ? (
+            <>
+              <button
+                className="delete-image-button"
+                onClick={handleDeleteImage}
+                disabled={deleteDisabled}
               >
-                Upload images to enable execution.
-              </p>
-            )}
-            <Select
-              className="my-select"
-              options={datasetsOptions}
-              value={selectedDatasetOption}
-              onChange={setSelectedDatasetOption}
-              placeholder="Select a dataset..."
-            />
-            <Select
-              className="my-select"
-              options={functionsOptions}
-              value={selectedFunctionOption}
-              onChange={setSelectedFunctionOption}
-              placeholder="Select a function..."
-            />
-          </div>
-          {/* Results and images section */}
-          <div className="div-middle">
-            {/* Results textarea */}
-            <div className="div-results">
-              <label>Results</label>
-              <div className="textarea-wrapper">
-                {loading && (
-                  <div className="loading-dots-textarea">
-                    <span>.</span>
-                    <span>.</span>
-                    <span>.</span>
-                  </div>
-                )}
-                <textarea
-                  name="postContent"
-                  value={loading ? "" : predictResult}
-                  onChange={(e) => setPredictResult(e.target.value)}
-                  readOnly
-                />
-              </div>
-            </div>
-
-            {/* Image slider */}
-            <div className="slider-container-wrapper">
-              <label>Test Images</label>
-              <div className="slider-container">
-                {images.length > 0 ? (
-                  <>
-                    <SimpleImageSlider
-                      width={400}
-                      height={300}
-                      images={images.map((img) => ({ url: img }))}
-                      showNavs={true}
-                      startIndex={currentIndex} // mantém posição correta
-                      onStartSlide={(idx) => setCurrentIndex(idx - 1)} // ajusta índice (base 0)
-                    />
-                    <div className="inline-slider">
-                      {images.length > 0 ? currentIndex + 1 : 0} /{" "}
-                      {images.length}
-                    </div>
-                  </>
-                ) : (
-                  <div className="no-images-placeholder">No images yet</div>
-                )}
-              </div>
-            </div>
-          </div>
-          <ToastContainer />
+                Delete Image
+              </button>
+              <button onClick={handleExecute} id="executerButton">
+                Execute
+              </button>
+            </>
+          ) : (
+            <p className="button-paragraph">
+              Upload images to enable execution.
+            </p>
+          )}
+          <Select
+            className="my-select"
+            options={datasetsOptions}
+            value={selectedDatasetOption}
+            onChange={setSelectedDatasetOption}
+            placeholder="Select a dataset..."
+          />
+          <Select
+            className="my-select"
+            options={functionsOptions}
+            value={selectedFunctionOption}
+            onChange={setSelectedFunctionOption}
+            placeholder="Select a function..."
+          />
         </div>
+
+        {/* Image Slider with Results */}
+        <div className="div-middle">
+          <div className="slider-container-wrapper">
+            <label>Test Images</label>
+            {images.length > 0 ? (
+              <div className="slider-container">
+                {loading && <div className="loading-dots-textarea">...</div>}
+
+                <SimpleImageSlider
+                  className="slider"
+                  width={400}
+                  height={300}
+                  images={images.map((img) => ({ url: img }))}
+                  showNavs={true}
+                  startIndex={currentIndex}
+                  onStartSlide={(idx) => setCurrentIndex(idx - 1)}
+                />
+                <div className="slider-index">
+                  {currentIndex + 1} / {images.length}
+                </div>
+
+                <div className="image-result">
+                  {predictResults[currentIndex] || "No prediction yet."}
+                </div>
+              </div>
+            ) : (
+              <div className="no-images-placeholder">No images yet</div>
+            )}
+          </div>
+        </div>
+        <ToastContainer />
       </div>
-    </>
+    </div>
   );
 };
 
