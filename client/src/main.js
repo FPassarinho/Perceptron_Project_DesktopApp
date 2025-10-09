@@ -1,61 +1,56 @@
+import "dotenv/config"; // carrega .env
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
-import started from "electron-squirrel-startup";
+import { spawn } from "node:child_process";
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (started) {
-  app.quit();
-}
+let backendProcess;
 
-const iconPath = path.resolve(process.cwd(), "src", "icons", "icon.png");
+// Se a variável existir, estamos em dev
+const devServerURL = process.env.VITE_DEV_SERVER_URL;
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    icon: iconPath, // ou icon.ico, depende do seu arquivo
     width: 800,
     height: 600,
-
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  // and load the index.html of the app.
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  if (devServerURL) {
+    mainWindow.loadURL(devServerURL);
+    mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-    );
+    mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  createWindow();
+// Inicia backend só se não estivermos em dev
+const startBackend = () => {
+  const backendPath = path.join(__dirname, "../server/dist/server.exe");
+  console.log(`Starting backend from: ${backendPath}`);
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+  backendProcess = spawn(backendPath, [], { stdio: "inherit" });
+
+  backendProcess.on("exit", (code) => {
+    console.log(`Backend exited with code ${code}`);
   });
+
+  backendProcess.on("error", (err) => {
+    console.error("Failed to start backend:", err);
+  });
+};
+
+app.whenReady().then(() => {
+  if (!devServerURL) startBackend();
+  createWindow();
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  if (backendProcess) backendProcess.kill();
+  if (process.platform !== "darwin") app.quit();
 });
 
-console.log("Icon path:", path.join(__dirname, "icons", "icon.png"));
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
