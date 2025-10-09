@@ -150,10 +150,12 @@ def upload():
 
     files = request.files.getlist("files")
     saved_files = []
-    numberTestImages = countImages(test_images_path)  # Current number of images
+
+    rename_images(UPLOAD_FOLDER)
+    numberTestImages = countImages(UPLOAD_FOLDER)
 
     for i, file in enumerate(files, start=numberTestImages):
-        filename = f"img-{i}.png"  # Sequential filename
+        filename = f"img-{i}.png" 
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
         saved_files.append(filename)
@@ -170,7 +172,6 @@ def deleteImage(filename):
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-        rename_images(UPLOAD_FOLDER)  # Re-sequence image filenames
         return jsonify({"message": f"{filename} deleted successfully!"})
     else:
         return jsonify({"error": "File not found"}), 404
