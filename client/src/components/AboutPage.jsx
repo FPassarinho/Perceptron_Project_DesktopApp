@@ -32,8 +32,7 @@ const AboutPage = () => {
               number of training epochs to observe how the perceptron responds.
             </p>
             <p>
-              If you want to dive deeper, you can inspect the code or try a
-              Python-only version that runs in the terminal. Before using these
+              If you want to dive deeper, you can inspect the code by downloading the files that are in github. Before using these
               projects, it is highly recommended to read their README files for
               setup instructions and additional details.
               <ul>

@@ -10,7 +10,8 @@ import {
 } from "../services/apiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SimpleImageSlider from "react-simple-image-slider";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
 import "./perceptron.css";
 
 const PerceptronPage = () => {
@@ -52,25 +53,22 @@ const PerceptronPage = () => {
   }, []);
 
   // Fetch images
+  const getImages = async () => {
+    try {
+      const dataImages = await fetchImages();
+      setImages(dataImages);
+      setPredictResults(
+        new Array(dataImages.length).fill("Prediction will appear here.")
+      );
+      setCurrentIndex(0);
+    } catch (error) {
+      console.error("Failed to fetch images:", error);
+    }
+  };
+
   useEffect(() => {
-    const getImages = async () => {
-      try {
-        const dataImages = await fetchImages();
-        setImages(dataImages);
-        setPredictResults(
-          new Array(dataImages.length).fill("Prediction will appear here.")
-        );
-      } catch (error) {
-        console.error("Failed to fetch images:", error);
-      }
-    };
     getImages();
   }, []);
-
-  // Adjust currentIndex if images are removed
-  useEffect(() => {
-    if (currentIndex >= images.length) setCurrentIndex(images.length - 1);
-  }, [images]);
 
   // Execute perceptron prediction
   const handleExecute = async () => {
@@ -83,6 +81,7 @@ const PerceptronPage = () => {
       });
       return;
     }
+
     setLoading(true);
     try {
       toast.success("Execution started!", {
@@ -115,38 +114,33 @@ const PerceptronPage = () => {
   // Delete image
   const handleDeleteImage = async () => {
     if (images.length === 0 || deleteDisabled) return;
-
     setDeleteDisabled(true);
+
     const url = images[currentIndex];
     const filename = url.split("/").pop();
 
     try {
       const response = await deleteImage(filename);
+
       toast.success(response.message, {
         position: "top-right",
-        autoClose: 4000,
+        autoClose: 3000,
         hideProgressBar: true,
         theme: "colored",
       });
 
-      const updatedImages = images.filter((_, idx) => idx !== currentIndex);
-      const updatedResults = predictResults.filter(
-        (_, idx) => idx !== currentIndex
-      );
-
-      setImages(updatedImages);
-      setPredictResults(updatedResults);
-      setCurrentIndex(Math.min(currentIndex, updatedImages.length - 1));
+      await getImages();
+      setCurrentIndex((prev) => Math.max(prev - 1, 0));
     } catch (err) {
       toast.error("Failed to delete image", {
         position: "top-right",
-        autoClose: 4000,
+        autoClose: 3000,
         hideProgressBar: true,
         theme: "colored",
       });
       console.error(err);
     } finally {
-      setTimeout(() => setDeleteDisabled(false), 2000);
+      setTimeout(() => setDeleteDisabled(false), 400);
     }
   };
 
@@ -197,24 +191,35 @@ const PerceptronPage = () => {
             <label>Test Images</label>
             {images.length > 0 ? (
               <div className="slider-container">
-                {loading && <div className="loading-dots-textarea">...</div>}
+                <div className="gallery-wrapper">
+                  <ImageGallery
+                    key={images.join(",")}
+                    items={images.map((url) => ({
+                      original: url,
+                      thumbnail: url,
+                    }))}
+                    showThumbnails={false}
+                    showPlayButton={false}
+                    showFullscreenButton={false}
+                    startIndex={currentIndex}
+                    onSlide={(index) => setCurrentIndex(index)}
+                    additionalClass="my-custom-gallery"
+                  />
+                </div>
 
-                <SimpleImageSlider
-                  className="slider"
-                  width={400}
-                  height={300}
-                  images={images.map((img) => ({ url: img }))}
-                  showNavs={true}
-                  startIndex={currentIndex}
-                  onStartSlide={(idx) => setCurrentIndex(idx - 1)}
-                />
                 <div className="slider-index">
                   {currentIndex + 1} / {images.length}
                 </div>
 
-                <div className="image-result">
-                  {predictResults[currentIndex] || "No prediction yet."}
-                </div>
+                {currentIndex < predictResults.length && (
+                  <div className="image-result">
+                    {loading ? (
+                      <span className="loading-dots"></span>
+                    ) : (
+                      predictResults[currentIndex] || "No prediction yet."
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="no-images-placeholder">No images yet</div>

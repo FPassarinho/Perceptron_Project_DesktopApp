@@ -152,7 +152,7 @@ class Perceptron:
                     # Confident prediction that image is the target letter
                     results.append({
                         "image": i + 1,
-                        "prediction": f"• I am certain that image {i + 1} is a {self.word} with {prediction_percentage:.2f}% confidence!\n"
+                        "prediction": f"• I am certain that image {i + 1} is an {self.word} with {prediction_percentage:.2f}% confidence!\n"
                     })
                 else:
                     # Confident prediction that image is NOT the target letter
