@@ -1,12 +1,17 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+const path = require("path");
+const { execSync } = require("child_process");
 
 module.exports = {
   packagerConfig: {
-    icon: './src/icons/icon',
+    icon: "./src/icons/icon",
     asar: true,
+    extraResource: [path.resolve(__dirname, "../server/dist/server.exe")],
   },
+
   rebuildConfig: {},
+
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
@@ -25,15 +30,13 @@ module.exports = {
       config: {},
     },
   ],
+
   plugins: [
     {
       name: "@electron-forge/plugin-vite",
       config: {
-        // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
-        // If you are familiar with Vite configuration, it will look really familiar.
         build: [
           {
-            // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
             entry: "src/main.js",
             config: "vite.main.config.mjs",
             target: "main",
@@ -52,8 +55,7 @@ module.exports = {
         ],
       },
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
+
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,

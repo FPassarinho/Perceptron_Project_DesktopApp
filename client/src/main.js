@@ -1,12 +1,8 @@
-import "dotenv/config"; // carrega .env
-import { app, BrowserWindow } from "electron";
 import path from "node:path";
+import { app, BrowserWindow } from "electron";
 import { spawn } from "node:child_process";
 
 let backendProcess;
-
-// Se a variável existir, estamos em dev
-const devServerURL = process.env.VITE_DEV_SERVER_URL;
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -17,40 +13,36 @@ const createWindow = () => {
     },
   });
 
-  if (devServerURL) {
-    mainWindow.loadURL(devServerURL);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
 };
 
-// Inicia backend só se não estivermos em dev
+const isDev = !!process.env.VITE_DEV_SERVER_URL;
+
 const startBackend = () => {
-  const backendPath = path.join(__dirname, "../server/dist/server.exe");
-  console.log(`Starting backend from: ${backendPath}`);
+  const backendPath = isDev
+    ? path.join(__dirname, "../server/dist/server.exe")
+    : path.join(process.resourcesPath, "server.exe");
+
+  console.log("Starting backend:", backendPath);
 
   backendProcess = spawn(backendPath, [], { stdio: "inherit" });
 
   backendProcess.on("exit", (code) => {
     console.log(`Backend exited with code ${code}`);
   });
-
-  backendProcess.on("error", (err) => {
-    console.error("Failed to start backend:", err);
-  });
 };
 
 app.whenReady().then(() => {
-  if (!devServerURL) startBackend();
+  if (!isDev) startBackend();
   createWindow();
 });
 
 app.on("window-all-closed", () => {
   if (backendProcess) backendProcess.kill();
   if (process.platform !== "darwin") app.quit();
-});
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
