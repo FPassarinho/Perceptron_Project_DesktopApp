@@ -22,23 +22,14 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  align-items: center; /* Alinha verticalmente no meio */
+  align-items: center;
   justify-content: center;
 }
 
 .button-div-perceptron button {
   padding: 8px 16px;
-  border-radius: 6px;
   width: 150px;
-  background-color: #24bcb4;
   color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.button-div-perceptron button:hover {
-  background-color: #049494;
 }
 
 .my-select {
@@ -48,7 +39,7 @@
   z-index: 10;
 }
 
-.button-paragraph {
+.paragraph {
   border: 2px solid #24bcb4;
   border-radius: 8px;
   padding: 5px;
@@ -72,12 +63,6 @@
   flex-direction: column;
   align-items: center;
   width: 440px;
-}
-
-.slider-container-wrapper label {
-  font-size: x-large;
-  font-weight: bold;
-  margin-bottom: 10px;
 }
 
 .slider-container {
@@ -160,12 +145,15 @@
 
 .image-result {
   margin-top: 10px;
-  font-style: italic;
   color: #333;
   text-align: center;
   width: 100%;
   padding: 6px;
   border-top: 1px solid #24bcb4;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .loading-dots {
@@ -174,8 +162,6 @@
   font-style: italic;
   color: gray;
   display: inline-block;
-  text-align: center;
-  width: 100%;
 }
 
 .loading-dots::after {
@@ -203,6 +189,19 @@
   }
 }
 
+.no-images-placeholder {
+  width: 100%;
+  min-height: 300px;
+  border: 2px solid #24bcb4;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: gray;
+  font-style: italic;
+  background-color: #f9f9f9;
+}
 
 /* MODAL */
 .modal-overlay {
@@ -211,7 +210,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

@@ -33,7 +33,10 @@ const PerceptronPage = () => {
   const [deleteDisabled, setDeleteDisabled] = useState(false);
   const galleryRef = useRef(null);
 
-  // Fetch datasets and functions
+  // Modal states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
+
   useEffect(() => {
     const getOptions = async () => {
       try {
@@ -53,7 +56,10 @@ const PerceptronPage = () => {
     getOptions();
   }, []);
 
-  // Fetch images
+  useEffect(() => {
+    getImages();
+  }, []);
+
   const getImages = async () => {
     try {
       const dataImages = await fetchImages();
@@ -68,16 +74,11 @@ const PerceptronPage = () => {
   };
 
   useEffect(() => {
-    getImages();
-  }, []);
-
-  useEffect(() => {
     if (galleryRef.current) {
       galleryRef.current.slideToIndex(currentIndex);
     }
   }, [currentIndex, images]);
 
-  // Execute perceptron prediction
   const handleExecute = async () => {
     if (!selectedDatasetOption || !selectedFunctionOption) {
       toast.error("Select a dataset or function before starting!", {
@@ -118,19 +119,11 @@ const PerceptronPage = () => {
     }
   };
 
-  // Delete image
-  // Delete image com confirmação
-  // Estados adicionais
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [imageToDelete, setImageToDelete] = useState(null);
-
-  // Abre modal
   const confirmDeleteImage = (index) => {
     setImageToDelete(index);
     setShowDeleteModal(true);
   };
 
-  // Função real de delete
   const executeDeleteImage = async () => {
     if (imageToDelete === null || deleteDisabled) return;
     setDeleteDisabled(true);
@@ -148,15 +141,12 @@ const PerceptronPage = () => {
 
       setImages((prevImages) => {
         const newImages = prevImages.filter((_, idx) => idx !== imageToDelete);
-
         setCurrentIndex((prevIndex) =>
           prevIndex >= newImages.length ? newImages.length - 1 : prevIndex
         );
-
         setPredictResults((prevResults) =>
           prevResults.filter((_, idx) => idx !== imageToDelete)
         );
-
         return newImages;
       });
     } catch (err) {
@@ -185,20 +175,17 @@ const PerceptronPage = () => {
             {images.length > 0 ? (
               <>
                 <button
-                  className="delete-image-button"
                   onClick={() => confirmDeleteImage(currentIndex)}
                   disabled={deleteDisabled}
                 >
                   Delete Image
-                </button>   
-                <button onClick={handleExecute} id="executerButton">
+                </button>
+                <button onClick={handleExecute} disabled={loading}>
                   Execute
                 </button>
               </>
             ) : (
-              <p className="button-paragraph">
-                Upload images to enable execution.
-              </p>
+              <p className="paragraph">Upload images to enable execution.</p>
             )}
             <Select
               className="my-select"
@@ -219,7 +206,7 @@ const PerceptronPage = () => {
           {/* Image Slider with Results */}
           <div className="div-middle">
             <div className="slider-container-wrapper">
-              <label>Test Images</label>
+              <h3>Test Images</h3>
               {images.length > 0 ? (
                 <div className="slider-container">
                   <div className="gallery-wrapper">
@@ -236,21 +223,19 @@ const PerceptronPage = () => {
                       onSlide={(index) => setCurrentIndex(index)}
                       additionalClass="my-custom-gallery"
                     />
-                  </div>
-
-                  <div className="slider-index">
-                    {currentIndex + 1} / {images.length}
-                  </div>
-
-                  {currentIndex < predictResults.length && (
-                    <div className="image-result">
-                      {loading ? (
-                        <span className="loading-dots"></span>
-                      ) : (
-                        predictResults[currentIndex] || "No prediction yet."
-                      )}
+                    <div className="slider-index">
+                      {currentIndex + 1} / {images.length}
                     </div>
-                  )}
+                    {currentIndex < predictResults.length && (
+                      <div className="image-result">
+                        {loading ? (
+                          <span className="loading-dots"></span>
+                        ) : (
+                          predictResults[currentIndex] || "No prediction yet."
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div className="no-images-placeholder">No images yet</div>
@@ -260,6 +245,7 @@ const PerceptronPage = () => {
           <ToastContainer />
         </div>
       </div>
+
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal-content">

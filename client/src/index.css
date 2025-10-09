@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap");
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family:
+    "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Apply Segoe UI everywhere */
 }
 
 html,
@@ -14,25 +14,64 @@ body {
 }
 
 h1,
-h3 {
-  font-weight: 700;
+h3,
+button {
+  font-family: inherit;
 }
 
 h1 {
   font-size: 3.5rem; /* 350% */
 }
 
-/* MAIN STYLLING BUTTONS */
+h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* ----- UNIVERSAL BUTTON STYLE ----- */
 button {
   border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
   background-color: #24bcb4;
   color: white;
-  font-family: "Rubik", sans-serif;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
   background-color: #049494;
+  transform: translateY(-2px); /* efeito de “lift” */
+}
+
+button:disabled {
+  background-color: #b2b2b2;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ----- ICON BUTTONS (como o botão de voltar no Canvas) ----- */
+.button-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 20px;
+}
+
+.button-icon:hover {
+  transform: scale(1.1);
 }

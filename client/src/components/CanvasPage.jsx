@@ -109,7 +109,7 @@ const CanvasPage = () => {
               <i className="bi bi-arrow-left"></i>
             </button>
           </div>
-          <h2>Draw the letter that you want to test</h2>
+          <h3>Draw the letter that you want to test</h3>
           {/* Canvas element */}
           <canvas
             className="canvas"
