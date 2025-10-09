@@ -152,19 +152,19 @@ class Perceptron:
                     # Confident prediction that image is the target letter
                     results.append({
                         "image": i + 1,
-                        "prediction": f"• I am certain that image {i + 1} is an {self.word} with {prediction_percentage:.2f}% confidence!\n"
+                        "prediction": f"I am certain that image {i + 1} is an {self.word} with {prediction_percentage:.2f}% confidence!\n"
                     })
                 else:
                     # Confident prediction that image is NOT the target letter
                     results.append({
                         "image": i + 1,
-                        "prediction": f"• I am certain that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}% confidence!\n",
+                        "prediction": f"I am certain that image {i + 1} is not an {self.word} with {100 - prediction_percentage:.2f}% confidence!\n",
                     })
             else:
                 # Step function: simple 0 or 1 output
                 if prediction == 1:
-                    results.append({"prediction": f"• I think that image {i + 1} is an {self.word}!\n"})
+                    results.append({"prediction": f"I think that image {i + 1} is an {self.word}!\n"})
                 else:
-                    results.append({"prediction": f"• I think that image {i + 1} is not an {self.word}!\n"})
+                    results.append({"prediction": f"I think that image {i + 1} is not an {self.word}!\n"})
 
         return results
