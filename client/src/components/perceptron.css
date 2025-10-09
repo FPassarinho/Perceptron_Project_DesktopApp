@@ -159,7 +159,7 @@
 }
 
 .image-result {
-  margin-top: 10px; 
+  margin-top: 10px;
   font-style: italic;
   color: #333;
   text-align: center;
@@ -169,10 +169,13 @@
 }
 
 .loading-dots {
-  font-size: 24px;
+  font-size: 30px;
+  line-height: 0;
   font-style: italic;
   color: gray;
   display: inline-block;
+  text-align: center;
+  width: 100%;
 }
 
 .loading-dots::after {

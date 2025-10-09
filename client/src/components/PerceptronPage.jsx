@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Select from "react-select";
 import {
   fetchDatasets,
@@ -31,6 +31,7 @@ const PerceptronPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [deleteDisabled, setDeleteDisabled] = useState(false);
+  const galleryRef = useRef(null);
 
   // Fetch datasets and functions
   useEffect(() => {
@@ -69,6 +70,12 @@ const PerceptronPage = () => {
   useEffect(() => {
     getImages();
   }, []);
+
+  useEffect(() => {
+    if (galleryRef.current) {
+      galleryRef.current.slideToIndex(currentIndex);
+    }
+  }, [currentIndex, images]);
 
   // Execute perceptron prediction
   const handleExecute = async () => {
@@ -129,8 +136,22 @@ const PerceptronPage = () => {
         theme: "colored",
       });
 
-      await getImages();
-      setCurrentIndex((prev) => Math.max(prev - 1, 0));
+      // Atualiza imagens e índice de forma segura
+      setImages((prevImages) => {
+        const idxToRemove = currentIndex; // salva o índice atual aqui
+        const newImages = prevImages.filter((_, idx) => idx !== idxToRemove);
+
+        setCurrentIndex((prevIndex) =>
+          prevIndex >= newImages.length ? newImages.length - 1 : prevIndex
+        );
+
+        // Atualiza resultados também
+        setPredictResults((prevResults) =>
+          prevResults.filter((_, idx) => idx !== idxToRemove)
+        );
+
+        return newImages;
+      });
     } catch (err) {
       toast.error("Failed to delete image", {
         position: "top-right",
@@ -193,7 +214,7 @@ const PerceptronPage = () => {
               <div className="slider-container">
                 <div className="gallery-wrapper">
                   <ImageGallery
-                    key={images.join(",")}
+                    ref={galleryRef}
                     items={images.map((url) => ({
                       original: url,
                       thumbnail: url,
