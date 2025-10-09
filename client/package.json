@@ -1,12 +1,12 @@
 {
-  "name": "client",
-  "productName": "client",
+  "name": "perceptron",
+  "productName": "perceptron",
   "version": "1.0.0",
   "description": "Scientific Initiation Project!",
-  "author": "Filipe Passarinho - filipeamaropassarinho@gmail.com / Fábio Sampaio - fabio.sampaio@estsetubal.ips.pt",
+  "author": "Filipe Passarinho - filipeamaropassarinho@gmail.com / Fábio Sampaio, Ph. D - fabio.sampaio@estsetubal.ips.pt",
   "main": ".vite/build/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron-forge start",
     "dev": "vite",
     "build:renderer": "vite build --outDir ./resources/renderer",
     "make": "npm run build:renderer && electron-forge make",

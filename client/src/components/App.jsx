@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import IndexPage from "./IndexPage";
 import AboutPage from "./AboutPage";
 import PerceptronPage from "./PerceptronPage";
@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<IndexPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/perceptron" element={<PerceptronPage />} />
-        <Route path="/canvas" element={<CanvasPage />} />s
+        <Route path="/canvas" element={<CanvasPage />} />
       </Routes>
     </Router>
   );
