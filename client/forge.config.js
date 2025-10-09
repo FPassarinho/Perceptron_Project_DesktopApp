@@ -7,7 +7,9 @@ module.exports = {
   packagerConfig: {
     icon: "./src/icons/icon",
     asar: true,
-    extraResource: [path.resolve(__dirname, "../server/dist/server.exe")],
+    extraResource: [
+      path.resolve(__dirname, "../server/dist/server/server.exe"),
+    ],
   },
 
   rebuildConfig: {},

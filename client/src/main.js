@@ -27,7 +27,7 @@ const createWindow = () => {
 
 // Inicia backend só se não estivermos em dev
 const startBackend = () => {
-  const backendPath = path.join(__dirname, "../server/dist/server.exe");
+  const backendPath = path.join(__dirname, "../server/dist/server/server.exe");
   console.log(`Starting backend from: ${backendPath}`);
 
   backendProcess = spawn(backendPath, [], { stdio: "inherit" });
