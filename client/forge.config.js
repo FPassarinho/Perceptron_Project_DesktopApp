@@ -1,14 +1,14 @@
+const path = require("path");
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-const path = require("path");
-const { execSync } = require("child_process");
 
 module.exports = {
   packagerConfig: {
-    icon: "./src/icons/icon",
-    asar: true,
+    icon: "./src/icons/icon", 
+    asar: true, 
     extraResource: [
       path.resolve(__dirname, "../server/dist/server/server.exe"),
+      path.resolve(__dirname, "../resources/renderer"),
     ],
   },
 
@@ -16,16 +16,16 @@ module.exports = {
 
   makers: [
     {
-      name: "@electron-forge/maker-squirrel",
+      name: "@electron-forge/maker-squirrel", 
       config: {},
     },
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
+      platforms: ["darwin"], 
     },
     {
       name: "@electron-forge/maker-deb",
-      config: {},
+      config: {}, 
     },
     {
       name: "@electron-forge/maker-rpm",

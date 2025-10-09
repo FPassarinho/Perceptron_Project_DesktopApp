@@ -7,13 +7,14 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "make": "electron-forge make",
-    "make:prod": "electron-forge make --publish=never",
-    "publish": "electron-forge publish",
+    "dev": "vite",
+    "build:renderer": "vite build --outDir ./resources/renderer",
+    "make": "npm run build:renderer && electron-forge make",
+    "make:prod": "npm run build:renderer && electron-forge make --publish=never",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
-  "license": "MIT",
+  "license": "BSD-2-Clause",
   "devDependencies": {
     "@electron-forge/cli": "^7.9.0",
     "@electron-forge/maker-deb": "^7.8.3",

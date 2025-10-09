@@ -1,4 +1,4 @@
-import "dotenv/config"; // carrega .env
+import "dotenv/config";
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -7,7 +7,27 @@ let backendProcess;
 
 // Se a variável existir, estamos em dev
 const devServerURL = process.env.VITE_DEV_SERVER_URL;
+const isDev = !!devServerURL;
 
+// Função para pegar o caminho correto do backend
+const getBackendPath = () => {
+  if (isDev) {
+    return path.join(__dirname, "../server/dist/server/server.exe");
+  }
+  // Em produção, está dentro de resources do pacote
+  return path.join(process.resourcesPath, "server.exe");
+};
+
+// Função para pegar o caminho correto do index.html
+const getIndexHtml = () => {
+  if (isDev) {
+    return devServerURL;
+  }
+  // Em produção, build do Vite está copiado para resources/renderer
+  return path.join(process.resourcesPath, "renderer/index.html");
+};
+
+// Cria janela principal
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -17,17 +37,17 @@ const createWindow = () => {
     },
   });
 
-  if (devServerURL) {
+  if (isDev) {
     mainWindow.loadURL(devServerURL);
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
+    mainWindow.loadFile(getIndexHtml());
   }
 };
 
-// Inicia backend só se não estivermos em dev
+// Inicia backend
 const startBackend = () => {
-  const backendPath = path.join(__dirname, "../server/dist/server/server.exe");
+  const backendPath = getBackendPath();
   console.log(`Starting backend from: ${backendPath}`);
 
   backendProcess = spawn(backendPath, [], { stdio: "inherit" });
@@ -42,7 +62,7 @@ const startBackend = () => {
 };
 
 app.whenReady().then(() => {
-  if (!devServerURL) startBackend();
+  if (!isDev) startBackend();
   createWindow();
 });
 
