@@ -48,7 +48,7 @@ To run this project you must have installed:
 - cd server
 - python -m venv venv
 - venv\Scripts\activate
-- pip install flask flask-cors numpy pillow
+- pip install flask flask-cors numpy pillow waitress
 
 ## Frontend
 
@@ -77,7 +77,7 @@ In other terminal run:
 
 ## Creating the .exe for production
 
-***NOTE:*** Before building the production application, if you have made any changes to the datasets, it is mandatory to generate the corresponding .npz files. Otherwise, the production build will only include the .npz files that already exist.
+**_NOTE:_** Before building the production application, if you have made any changes to the datasets, it is mandatory to generate the corresponding .npz files. Otherwise, the production build will only include the .npz files that already exist.
 
 There is a helper function in `server/conversion_functions.py` called `generate_all_npz_local()` that will automatically create .npz files for all datasets. This function is intended for local development only and should be run before building the executable if you have added or modified datasets.
 
@@ -86,7 +86,7 @@ In one terminal:
 - cd server
 - venv/Scripts/activate
 - pip install pyinstaller
-- pyinstaller --onefile --console --add-data "datasets;datasets" --add-data "data_file;data_file" --add-data "test_images;test_images" --add-data "datasets.json;." --add-data "functions_options.json;." --name server server.py
+- pyinstaller --onefile --noconsole --clean --collect-all flask --optimize=2 --add-data "datasets;datasets" --add-data "data_file;data_file" --add-data "test_images;test_images" --add-data "datasets.json;." --add-data "functions_options.json;." --name server server.py
 
 In another terminal:
 
