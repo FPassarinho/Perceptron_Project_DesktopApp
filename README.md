@@ -1,6 +1,6 @@
 # Scientific Initiation Project - Perceptron Project
 
-**_Important-_**If you want just the application (.exe) is in the releases section - (Just works on windows)
+**Important:** If you want just the application (.exe) is in the releases section - (Just works on windows)
 
 [![License](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](LICENSE)
 
