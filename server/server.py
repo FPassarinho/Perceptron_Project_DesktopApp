@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+from waitress import serve
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from perceptron import Perceptron
@@ -180,4 +181,4 @@ def deleteImage(filename):
 # Run the Flask app on localhost:5000
 # ------------------------------
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    serve(app, host='127.0.0.1', port=5000, _quiet=False)

@@ -46,7 +46,7 @@ To run this project you must have installed:
 ## Install backend dependencies
 
 - cd server
-- python -m venv venv - to create virtual enviroment
+- python -m venv venv
 - venv\Scripts\activate
 - pip install flask flask-cors numpy pillow
 
@@ -73,14 +73,25 @@ In other terminal run:
 - cd client
 - npm run start # Start development mode
 
-<!-- ## Running the aplication with the .exe file (already created in this project)
+## Running the aplication with the .exe file (already created in this project)
 
 ## Creating the .exe for production
+
+***NOTE:*** Before building the production application, if you have made any changes to the datasets, it is mandatory to generate the corresponding .npz files. Otherwise, the production build will only include the .npz files that already exist.
+
+There is a helper function in `server/conversion_functions.py` called `generate_all_npz_local()` that will automatically create .npz files for all datasets. This function is intended for local development only and should be run before building the executable if you have added or modified datasets.
+
+In one terminal:
 
 - cd server
 - venv/Scripts/activate
 - pip install pyinstaller
-- pyinstaller --add-data "datasets;datasets" --add-data "data_file;data_file" --add-data "test_images;test_images" --add-data "datasets.json;." --add-data "functions_options.json;." --name server server.py -->
+- pyinstaller --onefile --console --add-data "datasets;datasets" --add-data "data_file;data_file" --add-data "test_images;test_images" --add-data "datasets.json;." --add-data "functions_options.json;." --name server server.py
+
+In another terminal:
+
+- cd client
+- npm run make
 
 ## What is a perceptron?
 
@@ -110,7 +121,7 @@ This program allows you to interactively experiment with a perceptron model. It 
 
 **Note:** All input images are interpreted as **uppercase machine-style letters.** Lowercase or handwritten letters may produce unexpected results.
 
-Next, select the **dataset** corresponding to the letter you want to detect — for example, choosing **Dataset A** to test whether your test images represent the letter “A” or not. You can then customize the perceptron’s configuration by selecting the **activation function** _(Step or Sigmoid)_, the **learning rate**, and the **number of training epochs.**
+Next, select the **dataset** corresponding to the letter you want to detect — for example, choosing **Dataset A** to test whether your test images represent the letter “A” or not. You can then customize the perceptron’s configuration by selecting the **activation function** Step or Sigmoid, the **learning rate**, and the **number of training epochs.**
 
 Each parameter combination has been **pre-optimized by the development team** to achieve a balance between accuracy and computation time. Even with the most demanding configuration (Sigmoid with maximum epochs and learning rate), training completes in about one minute, producing results that are both efficient and insightful.
 
@@ -137,12 +148,12 @@ This iterative correction continues for the defined number of epochs, gradually 
 
 **Note:** Training time depends on several factors: the number of pixels (image resolution), the size of the dataset, the learning rate, and the number of epochs. More pixels, a larger dataset, higher learning rates, or more epochs will all increase computation time.
 
-**_5. Activation Functions:_** This perceptron supports two activation modes:
+**5. Activation Functions:** This perceptron supports two activation modes:
 
 - Step Function — a binary decision: outputs 1 if the weighted sum ≥ 0, else 0.
 - Sigmoid Function — outputs a smooth probability between 0 and 1, allowing confidence estimation. Slower but more expressive.
 
-**_6. Evaluation:_** After training, the perceptron evaluates all test images. With the step function, predictions are binary (is or isn’t the target letter). With the sigmoid, the model outputs a confidence percentage, e.g. “I am 92% sure this image is an A.” The results are then returned as JSON to the frontend.
+**6. Evaluation:** After training, the perceptron evaluates all test images. With the step function, predictions are binary (is or isn’t the target letter). With the sigmoid, the model outputs a confidence percentage, e.g. “I am 92% sure this image is an A.” The results are then returned as JSON to the frontend.
 
 The backend is powered by Flask, which exposes multiple API endpoints:
 

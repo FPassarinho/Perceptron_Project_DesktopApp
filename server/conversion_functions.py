@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import re
+import json
 from PIL import Image
 
 # ------------------------------------------------------------
@@ -49,48 +50,10 @@ def center_array_image(pixel_matrix):
 # ------------------------------------------------------------
 # Functions for Storing Images in Files
 # ------------------------------------------------------------
-
-# Saves images as 1D arrays into a TXT file for training
-def loadStoreImagesFileTrain(count, dir_path, word):
-    with open(f'data_file/pixel_data{word}.txt', 'w') as file:
-        file.write('[\n')
-        for i in range(0, count):
-            image = Image.open(f"{dir_path}/img-{i}.png")
-            new_image = image.resize((120, 90))
-            new_image = new_image.convert("L")  # Convert to grayscale
-            pixel_matrix = np.array(new_image)
-            pixel_matrix = 1 - pixel_matrix / 255.0  # Normalize pixels to range 0-1 and invert
-
-            centered_matrix = center_array_image(pixel_matrix)  # Center the letter in vector
-
-            # Write the pixel values as a 1D array into TXT
-            file.write('  [\n')
-            file.write('\t\t' + ' '.join(map(str, centered_matrix)))
-            file.write('  ],\n')
-        file.write(']\n')
-
-# Saves images as 1D arrays into a TXT file for testing
-def loadStoreImagesFileTest(count, dir_path, word):
-    with open(f'data_file/pixel_data_test{word}.txt', 'w') as file:
-        file.write('[\n')
-        for i in range(0, count):
-            image = Image.open(f"{dir_path}/img-{i}.png")
-            new_image = image.resize((120, 90))
-            new_image = new_image.convert("L")  # Convert to grayscale
-            pixel_matrix = np.array(new_image)
-            pixel_matrix = 1 - pixel_matrix / 255.0
-
-            centered_matrix = center_array_image(pixel_matrix)
-
-            file.write('  [\n')
-            file.write('\t\t' + ' '.join(map(str, centered_matrix)))
-            file.write('  ],\n')
-        file.write(']\n')
-
 # Saves images in a compressed .npz format (faster to load than TXT)
 def loadStoreImagesFileNpz(count, dir_path, word):
     image_dict = {}
-    for i in range(0, count):
+    for i in range(count):
         image = Image.open(f"{dir_path}/img-{i}.png")
         new_image = image.resize((120, 90))
         new_image = new_image.convert("L")
@@ -100,8 +63,12 @@ def loadStoreImagesFileNpz(count, dir_path, word):
         centered_matrix = center_array_image(pixel_matrix)
         image_dict[f"img011-{i}"] = centered_matrix
 
-    # Save all images in a single .npz file for efficiency
-    np.savez(f"data_file/image_data{word}.npz", **image_dict)
+    base_path = os.path.dirname(os.path.abspath(__file__))  # server/
+    data_file_dir = os.path.join(base_path, "data_file")
+    os.makedirs(data_file_dir, exist_ok=True)
+
+    np.savez(os.path.join(data_file_dir, f"image_data{word}.npz"), **image_dict)
+
 
 # Loads images from directory
 def loadStoreImages(count, dir_path):
@@ -142,7 +109,9 @@ def rename_images(folder):
         if old_path != new_path:
             os.rename(old_path, new_path)
 
-# Generic rename function for organizing datasets (specify folder)
+# ------------------------------------------------------------
+# Generic rename function
+# ------------------------------------------------------------
 def rename():
     folder = r"---"  # Replace with your dataset folder
 
@@ -156,3 +125,40 @@ def rename():
 
 ## Uncomment to run dataset renaming
 # rename()
+
+# ------------------------------------------------------------
+# Function to generate .npz for all datasets (development only)
+# ------------------------------------------------------------
+def generate_all_npz_local(datasets_json="datasets.json", datasets_base_path="datasets", data_file_dir="data_file"):
+    """
+    Creates .npz files for all datasets listed in the local JSON file.
+    Should be used only locally for development. Does NOT run automatically.
+    """
+    # Base path = folder where this script lives (server/)
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+    # Absolute paths inside server/
+    datasets_json_path = os.path.join(base_path, datasets_json)
+    datasets_base_path = os.path.join(base_path, datasets_base_path)
+    data_file_dir = os.path.join(base_path, data_file_dir)
+    
+    os.makedirs(data_file_dir, exist_ok=True)
+
+    # Load the list of datasets
+    with open(datasets_json_path, "r") as f:
+        list_dataset = json.load(f)
+
+    for dataset_info in list_dataset:
+        dataset_name = dataset_info["dataset"]
+        word = dataset_info["word"]
+        dataset_path = os.path.join(datasets_base_path, dataset_name)
+        npz_path = os.path.join(data_file_dir, f"image_data{word}.npz")
+
+        if not os.path.exists(npz_path):
+            num_images = countImages(dataset_path)
+            print(f"[DEV] Creating .npz for dataset '{dataset_name}' ({num_images} images)...")
+            loadStoreImagesFileNpz(num_images, dataset_path, word)
+        else:
+            print(f"[DEV] .npz already exists for '{dataset_name}', skipping...")
+
+generate_all_npz_local()

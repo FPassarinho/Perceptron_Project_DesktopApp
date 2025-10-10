@@ -8,7 +8,7 @@ module.exports = {
     asar: true,
     extraResource: [
       path.resolve(__dirname, "resources/renderer"),
-      path.resolve(__dirname, "../server/dist/server/server.exe"),
+      path.resolve(__dirname, "../server/dist/server.exe"),
     ],
   },
 

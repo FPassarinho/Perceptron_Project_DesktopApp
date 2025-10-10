@@ -2,28 +2,22 @@ import "dotenv/config";
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import fetch from "node-fetch";
 
 let backendProcess;
 
-// Se a variável existir, estamos em dev
+// Detecta se estamos em dev
 const devServerURL = process.env.VITE_DEV_SERVER_URL;
 const isDev = !!devServerURL;
 
-// Função para pegar o caminho correto do backend
+// Paths
 const getBackendPath = () => {
-  if (isDev) {
-    return path.join(__dirname, "../server/dist/server/server.exe");
-  }
-  // Em produção, está dentro de resources do pacote
+  if (isDev) return path.join(__dirname, "../server/dist/server/server.exe");
   return path.join(process.resourcesPath, "server.exe");
 };
 
-// Função para pegar o caminho correto do index.html
 const getIndexHtml = () => {
-  if (isDev) {
-    return devServerURL;
-  }
-  // Em produção, build do Vite está copiado para resources/renderer
+  if (isDev) return devServerURL;
   return path.join(process.resourcesPath, "renderer/index.html");
 };
 
@@ -45,24 +39,65 @@ const createWindow = () => {
   }
 };
 
-// Inicia backend
+// Inicia backend e captura logs
 const startBackend = () => {
-  const backendPath = getBackendPath();
-  console.log(`Starting backend from: ${backendPath}`);
+  if (isDev) {
+    // Em dev, roda o Python direto
+    const backendPath = path.join(__dirname, "../server/server.py");
+    console.log(`Starting backend in dev mode: ${backendPath}`);
 
-  backendProcess = spawn(backendPath, [], { stdio: "inherit" });
+    backendProcess = spawn("python", [backendPath], {
+      cwd: path.dirname(backendPath),
+      shell: true,
+      stdio: "pipe",
+    });
+  } else {
+    // Em produção, roda o exe
+    const backendPath = path.join(process.resourcesPath, "server.exe");
+    console.log(`Starting backend from exe: ${backendPath}`);
 
-  backendProcess.on("exit", (code) => {
-    console.log(`Backend exited with code ${code}`);
-  });
+    backendProcess = spawn(backendPath, {
+      cwd: path.dirname(backendPath),
+      shell: true,
+      stdio: "pipe",
+    });
+  }
 
-  backendProcess.on("error", (err) => {
-    console.error("Failed to start backend:", err);
-  });
+  backendProcess.stdout.on("data", (data) =>
+    console.log(`Backend: ${data.toString()}`)
+  );
+  backendProcess.stderr.on("data", (data) =>
+    console.error(`Backend ERROR: ${data.toString()}`)
+  );
+  backendProcess.on("exit", (code) =>
+    console.log(`Backend exited with code ${code}`)
+  );
+  backendProcess.on("error", (err) =>
+    console.error("Failed to start backend:", err)
+  );
 };
 
-app.whenReady().then(() => {
+// Espera o backend responder
+const waitForBackend = async (url, retries = 20, delay = 500) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await fetch(url);
+      console.log("Backend is ready");
+      return true;
+    } catch (e) {
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  console.error("Backend never responded");
+  return false;
+};
+
+app.whenReady().then(async () => {
   if (!isDev) startBackend();
+
+  // Espera o backend antes de abrir a janela
+  if (!isDev) await waitForBackend("http://127.0.0.1:5000/datasets");
+
   createWindow();
 });
 
@@ -74,3 +109,7 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
+
+// Captura erros globais
+process.on("uncaughtException", console.error);
+process.on("unhandledRejection", console.error);
