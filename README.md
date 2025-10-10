@@ -73,8 +73,6 @@ In other terminal run:
 - cd client
 - npm run start # Start development mode
 
-## Running the aplication with the .exe file (already created in this project)
-
 ## Creating the .exe for production
 
 **_NOTE:_** Before building the production application, if you have made any changes to the datasets, it is mandatory to generate the corresponding .npz files. Otherwise, the production build will only include the .npz files that already exist.
