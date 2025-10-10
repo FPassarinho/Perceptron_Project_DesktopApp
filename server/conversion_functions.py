@@ -127,7 +127,7 @@ def rename():
 # rename()
 
 # ------------------------------------------------------------
-# Function to generate .npz for all datasets (development only)
+# Function to generate .npz for all datasets // Good before creating .exe file
 # ------------------------------------------------------------
 def generate_all_npz_local(datasets_json="datasets.json", datasets_base_path="datasets", data_file_dir="data_file"):
     """
@@ -161,4 +161,5 @@ def generate_all_npz_local(datasets_json="datasets.json", datasets_base_path="da
         else:
             print(f"[DEV] .npz already exists for '{dataset_name}', skipping...")
 
-generate_all_npz_local()
+## Uncomment to run
+##generate_all_npz_local()
