@@ -7,6 +7,7 @@ module.exports = {
     icon: "./src/icons/icon",
     asar: true,
     extraResource: [
+      path.resolve(__dirname, "../LICENSE"),
       path.resolve(__dirname, "resources/renderer"),
       path.resolve(__dirname, "../server/dist/server.exe"),
     ],
