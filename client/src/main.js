@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
-import { spawn } from "node:child_process";
+import { spawn, exec } from "node:child_process";
 import fetch from "node-fetch";
 
 let backendProcess;
 const devServerURL = process.env.VITE_DEV_SERVER_URL;
 const isDev = !!devServerURL;
 
-// Paths
+// ----------------- Paths -----------------
 const getBackendPath = () =>
   isDev
     ? path.join(__dirname, "../server/dist/server/server.exe")
@@ -19,7 +19,7 @@ const getIndexHtml = () =>
     ? devServerURL
     : path.join(process.resourcesPath, "renderer/index.html");
 
-// Cria janela com loading
+// ----------------- Window -----------------
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -37,14 +37,15 @@ const createWindow = () => {
   return mainWindow;
 };
 
-// Start backend e captura logs
+// ----------------- Backend -----------------
 const startBackend = () => {
   const backendPath = getBackendPath();
   console.log(`Starting backend from: ${backendPath}`);
 
   backendProcess = spawn(backendPath, {
     cwd: path.dirname(backendPath),
-    shell: true,
+    shell: false, // Shell false para controlar o processo direto
+    detached: false, // Não criar processo separado
     stdio: "pipe",
   });
 
@@ -63,7 +64,6 @@ const startBackend = () => {
   );
 };
 
-// Espera backend
 const waitForBackend = async (url, retries = 40, delay = 500) => {
   for (let i = 0; i < retries; i++) {
     try {
@@ -79,17 +79,33 @@ const waitForBackend = async (url, retries = 40, delay = 500) => {
   return false;
 };
 
+// ----------------- Kill backend -----------------
+const killBackend = () => {
+  if (!backendProcess) return;
+  console.log("Killing backend...");
+
+  // Windows: força encerramento de processo e subprocessos
+  if (process.platform === "win32") {
+    exec(`taskkill /PID ${backendProcess.pid} /T /F`, (err) => {
+      if (err) console.error("Failed to kill backend:", err);
+    });
+  } else {
+    // Unix-like
+    backendProcess.kill("SIGTERM");
+  }
+};
+
+// ----------------- App Lifecycle -----------------
 app.whenReady().then(async () => {
   if (!isDev) startBackend();
 
-  // Aguarda backend antes de abrir a janela
   if (!isDev) await waitForBackend("http://127.0.0.1:5000/datasets");
 
   createWindow();
 });
 
 app.on("window-all-closed", () => {
-  if (backendProcess) backendProcess.kill();
+  killBackend();
   if (process.platform !== "darwin") app.quit();
 });
 
@@ -97,5 +113,7 @@ app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
-process.on("uncaughtException", console.error);
-process.on("unhandledRejection", console.error);
+// Garante kill mesmo em erros
+process.on("exit", killBackend);
+process.on("uncaughtException", killBackend);
+process.on("unhandledRejection", killBackend);

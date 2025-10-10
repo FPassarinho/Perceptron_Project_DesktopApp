@@ -40,6 +40,7 @@
     "react-image-gallery": "^1.4.0",
     "react-router-dom": "^7.7.1",
     "react-select": "^5.10.2",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "tree-kill": "^1.2.2"
   }
 }
