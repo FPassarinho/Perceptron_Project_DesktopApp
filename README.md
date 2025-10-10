@@ -1,6 +1,6 @@
 # Scientific Initiation Project - Perceptron Project
 
-## IF YOU WANT JUST THE APPLICATION (.EXE) IS IN THE RELEASES - (WINDOWS ONLY) / UNZIP THE FILE AND RUN perceptron.exe
+**_Important-_**If you want just the application (.exe) is in the releases section - (Just works on windows)
 
 [![License](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](LICENSE)
 
