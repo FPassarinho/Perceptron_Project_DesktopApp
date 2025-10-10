@@ -19,7 +19,7 @@ const getIndexHtml = () =>
     ? devServerURL
     : path.join(process.resourcesPath, "renderer/index.html");
 
-// ----------------- Window -----------------
+// ----------------- Windows -----------------
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -37,6 +37,25 @@ const createWindow = () => {
   return mainWindow;
 };
 
+// Tela de loading enquanto backend inicia
+const createLoadingWindow = () => {
+  const loadingWin = new BrowserWindow({
+    width: 300,
+    height: 200,
+    frame: false,
+    alwaysOnTop: true,
+    resizable: false,
+    movable: false,
+  });
+  loadingWin.loadURL(
+    `data:text/html,
+      <body style="display:flex;align-items:center;justify-content:center;font-family:sans-serif;">
+        <h5>Loading Perceptron...</h5>
+      </body>`
+  );
+  return loadingWin;
+};
+
 // ----------------- Backend -----------------
 const startBackend = () => {
   const backendPath = getBackendPath();
@@ -44,8 +63,8 @@ const startBackend = () => {
 
   backendProcess = spawn(backendPath, {
     cwd: path.dirname(backendPath),
-    shell: false, // Shell false para controlar o processo direto
-    detached: false, // Não criar processo separado
+    shell: false,
+    detached: false,
     stdio: "pipe",
   });
 
@@ -64,7 +83,7 @@ const startBackend = () => {
   );
 };
 
-const waitForBackend = async (url, retries = 40, delay = 500) => {
+const waitForBackend = async (url, retries = 40, delay = 400) => {
   for (let i = 0; i < retries; i++) {
     try {
       const res = await fetch(url);
@@ -84,22 +103,27 @@ const killBackend = () => {
   if (!backendProcess) return;
   console.log("Killing backend...");
 
-  // Windows: força encerramento de processo e subprocessos
   if (process.platform === "win32") {
     exec(`taskkill /PID ${backendProcess.pid} /T /F`, (err) => {
       if (err) console.error("Failed to kill backend:", err);
     });
   } else {
-    // Unix-like
     backendProcess.kill("SIGTERM");
   }
 };
 
 // ----------------- App Lifecycle -----------------
 app.whenReady().then(async () => {
-  if (!isDev) startBackend();
+  let loadingWin;
+  if (!isDev) {
+    loadingWin = createLoadingWindow();
 
-  if (!isDev) await waitForBackend("http://127.0.0.1:5000/datasets");
+    startBackend();
+
+    await waitForBackend("http://127.0.0.1:5000/datasets");
+
+    if (loadingWin) loadingWin.close();
+  }
 
   createWindow();
 });
