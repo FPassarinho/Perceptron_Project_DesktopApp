@@ -11,8 +11,8 @@
 
 ## Overview
 
-This project demonstrates a **simple perceptron neural network for letter recognition**. It has a Python backend to perform calculations and a React frontend running inside Electron for a desktop application experience
-The perceptron is a **fundamental neural network model that can solve linear classification problems**. Training data is stored in .npz files for compact and efficient handling. You can experiment with pre-loaded datasets.
+This project implements a **_simple perceptron neural network for letter recognition_**, designed for educational purposes. It combines a Python/Flask backend with a React + Electron frontend to provide a fully offline, interactive desktop experience. The tool allows learners to experiment with fundamental concepts in neural networks, connecting theory and practice through hands-on interaction.
+The perceptron is a **_foundational neural network model capable of linear classification._** Although simple, it provides a clear introduction to the principles underlying modern deep learning architectures.
 
 ## Features
 
@@ -133,25 +133,27 @@ Under the hood, this application combines Python (Flask) on the backend with a J
 
 The process can be divided into three key stages
 
-**1. Image Preprocessing:** Each image either preloaded or drawn by the user is resized to120x90 pixels (10,800 values) and converted to grayscale. A custom centering algorithm ensures that the letter remains in the middle of the image, which prevents misalignment from confusing the perceptron. The pixel values are then normalized between 0 and 1 and flattened into a 1D array, since the perceptron operates on vector inputs rather than on 2D matrices as images are.
+**1. Image Preprocessing:** Each image, whether preloaded or drawn by the user, is resized to 120x90 pixels (totaling 10,800 input values) and converted to grayscale. Since the training datasets consist of perfectly centered images, input alignment is critical. We developed a custom **centering algorithm** that identifies the indices of the first and last active pixels (the bounds of the drawing) within the 1D array. It then calculates the necessary padding to add before and after the content to center it perfectly within the frame. This step is crucial because, for a simple perceptron, even a slight shift in position can be interpreted as a completely different pattern. Finally, the pixel values are normalized between 0 and 1 and flattened into a 1D array (vector), as the perceptron processes linear input streams rather than 2D matrices.
 
-**2. Dataset Preparation and Labeling:** The program generates training data from the selected dataset. Half of the samples are labeled as positive (the target letter) and the other half as negative (non-target). Images are stored in compressed .npz format for efficient loading. When the perceptron is initialized, these vectors are loaded directly into memory.
+**2. Dataset Preparation and Labeling:** The program generates training data from the selected dataset. Each dataset has been meticulously balanced and studied, containing exactly **55 positive images** (the target letter) and **55 negative images** (non-target). This specific size was chosen because, for a simple single-layer perceptron, adding too much data or complex variations can actually degrade performance. Since the model cannot "recover" or understand complex non-linear relationships, a carefully curated, smaller dataset often yields better educational results than a massive, noisy one. Images are stored in compressed .npz format for efficient loading.
 
 **3. Perceptron Initialization:** Each image pixel is an input to the perceptron, and each input has a corresponding weight, initially randomized between -0.05 and 0.05. The bias starts at 0 and acts as an adjustable offset, shifting the activation threshold so the perceptron can make better decisions even when input values are near zero. The user-selected learning rate controls how aggressively the weights are updated during training, while the number of epochs defines how many times the model will iterate over the full dataset
 
-**4. Training Phase:** During training, the perceptron calculates the weighted sum of inputs `(w * x + bias)`, applies the chosen activation function, and compares the prediction to the expected label. The error (expected - predicted) is then used to adjust both the weights and the bias according to the perceptron learning rule:
+**4. Training Phase:** The model **trains from scratch every time** a prediction is requested. While this might take a moment (usually under a minute), it is not detrimental at this scale and serves to demonstrate the learning process in real-time. In larger, industrial-scale systems with massive datasets, training would be done once, and the weights saved for instant execution. However, for this educational tool, retraining allows users to instantly see how changing parameters (like epochs or learning rate) affects the learning outcome.
+
+During training, the perceptron calculates the weighted sum of inputs `(w * x + bias)`, applies the chosen activation function, and compares the prediction to the expected label. The error (expected - predicted) is then used to adjust both the weights and the bias according to the perceptron learning rule:
 
 - `w_new = w_old + learning_rate * error * input`
 - `bias_new = bias_old + learning_rate * error`
 
 This iterative correction continues for the defined number of epochs, gradually minimizing the loss and improving classification accuracy.
 
-**Note:** Training time depends on several factors: the number of pixels (image resolution), the size of the dataset, the learning rate, and the number of epochs. More pixels, a larger dataset, higher learning rates, or more epochs will all increase computation time.
+**5. Activation Functions:** We utilize the two most fundamental activation functions to demonstrate the core concepts:
 
-**5. Activation Functions:** This perceptron supports two activation modes:
+- **Step Function:** The classic perceptron function. It gives a binary "Yes" or "No" output (1 or 0). It simply tells you if the image _is_ or _is not_ the letter.
+- **Sigmoid Function:** A more modern approach for this context. It provides a continuous output between 0 and 1, effectively giving a **percentage of confidence** (e.g., "75% sure this is an A").
 
-- Step Function — a binary decision: outputs 1 if the weighted sum ≥ 0, else 0.
-- Sigmoid Function — outputs a smooth probability between 0 and 1, allowing confidence estimation. Slower but more expressive.
+**Note for Developers:** The source code is thoroughly commented, including explanations of the functions and timing markers to help anyone analyzing the performance or logic behind the perceptron's operations.
 
 **6. Evaluation:** After training, the perceptron evaluates all test images. With the step function, predictions are binary (is or isn’t the target letter). With the sigmoid, the model outputs a confidence percentage, e.g. “I am 92% sure this image is an A.” The results are then returned as JSON to the frontend.
 
@@ -166,7 +168,11 @@ The backend is powered by Flask, which exposes multiple API endpoints:
 The **Electron-based React frontend** communicates with these endpoints using `fetch()` requests. When the user selects a dataset, activation function, and parameters, the frontend sends this configuration to the `/predict` API. The backend then runs the full training process and returns structured prediction results that are displayed dynamically in the desktop interface.
 This architecture cleanly separates concerns: the Flask backend performs all computational logic and data management, while the Electron/React frontend handles interactivity and visualization. Together, they demonstrate how even a single-neuron perceptron can form the foundation of more complex neural networks and machine learning applications.
 
-**Challenge:** Try extending this perceptron into a multilayer perceptron (MLP). Observe how additional layers and activation functions allow it to learn more abstract features and improve classification performance.
+**Challenge:**
+
+- **Extend the Dataset:** Try adding digits (0-9) or other symbols to the training set to test the limits of what a single-layer perceptron can distinguish.
+- **New Activation Functions:** Implement additional functions like ReLU or Tanh to observe how they impact training speed and convergence compared to Step and Sigmoid.
+- **Multilayer Perceptron (MLP):** Try extending this architecture into a Multilayer Perceptron. Observe how hidden layers allow the network to solve non-linear problems (like the XOR problem) that this simple model cannot handle.
 
 Key concepts recap:
 
